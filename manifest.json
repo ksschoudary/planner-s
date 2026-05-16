@@ -1,0 +1,13 @@
+{
+  "name": "Planner S",
+  "short_name": "Planner S",
+  "description": "Your personal smart planner",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#110b08",
+  "theme_color": "#1a0f0a",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
