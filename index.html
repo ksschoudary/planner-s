@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Planner S"/>
+<meta name="theme-color" content="#1a0f0a"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="icon" href="icon.svg" type="image/svg+xml"/>
+<link rel="apple-touch-icon" href="icon.svg"/>
+<title>Planner S</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#110b08;--bg1:#1c120d;--bg2:#231710;--bg3:#2d1e14;
+  --surface:rgba(255,255,255,0.05);--surface2:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.15);
+  --text:#f5ede6;--text2:rgba(245,237,230,0.65);--text3:rgba(245,237,230,0.35);
+  --accent:#e8633a;--accent2:#d4884f;--accent3:#c4a882;
+  --blue:#5b8fd4;--green:#5bba8f;--yellow:#d4aa5b;--red:#d45b5b;--purple:#8b6fd4;
+  --r:16px;--r-sm:10px;--r-xs:7px;
+  --nav:68px;--safe-bot:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font-body)}
+body{background:radial-gradient(ellipse 100% 70% at 50% -20%,rgba(232,99,58,0.15),transparent 60%),
+     radial-gradient(ellipse 60% 40% at 90% 80%,rgba(91,143,212,0.08),transparent 50%),var(--bg)}
+
+/* ── APP SHELL ── */
+#app{position:fixed;inset:0;display:flex;flex-direction:column;padding-top:var(--safe-top);padding-bottom:var(--safe-bot);overflow:hidden}
+
+/* ── HEADER ── */
+.app-header{padding:14px 18px 10px;flex-shrink:0}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.clock-wrap{display:flex;align-items:center;gap:10px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(232,99,58,.5)}50%{opacity:.8;box-shadow:0 0 0 6px rgba(232,99,58,0)}}
+.live-clock{font-family:var(--font-body);font-size:15px;font-weight:600;letter-spacing:1px;color:var(--text)}
+.live-date{font-size:11px;color:var(--text2);font-weight:400}
+.fab-top{width:44px;height:44px;border-radius:14px;background:var(--accent);border:none;color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(232,99,58,.5);transition:transform .15s,box-shadow .15s}
+.fab-top:active{transform:scale(.9);box-shadow:0 2px 10px rgba(232,99,58,.4)}
+.app-title{font-family:var(--font-display);font-size:32px;font-weight:900;letter-spacing:-.5px;color:var(--text)}
+.app-subtitle{font-size:12px;color:var(--text3);font-weight:400;margin-top:1px}
+
+/* ── FILTER CHIPS ── */
+.filter-wrap{padding:0 16px 10px;overflow-x:auto;display:flex;gap:8px;scrollbar-width:none;flex-shrink:0}
+.filter-wrap::-webkit-scrollbar{display:none}
+.chip{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-family:var(--font-body);font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;box-shadow:0 2px 12px rgba(232,99,58,.4)}
+.chip-count{background:rgba(255,255,255,.2);border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;min-width:18px;text-align:center}
+.chip.active .chip-count{background:rgba(255,255,255,.3)}
+
+/* ── MAIN ── */
+main{flex:1;overflow:hidden;position:relative;min-height:0}
+.tab-section{display:none;flex-direction:column;height:100%;overflow:hidden}
+.tab-section.active{display:flex}
+
+/* ── CALENDAR TAB ── */
+.cal-container{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:0 12px}
+.cal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);flex:0 0 auto;overflow:hidden;margin-bottom:0}
+.cal-card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px}
+.cal-month-label{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text)}
+.cal-nav-group{display:flex;align-items:center;gap:6px}
+.today-btn{font-size:11px;font-weight:600;color:var(--accent);background:rgba(232,99,58,.15);border:1px solid rgba(232,99,58,.3);border-radius:20px;padding:4px 10px;cursor:pointer}
+.nav-arrow{width:30px;height:30px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
+.nav-arrow:active{background:var(--border2);color:var(--text)}
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);padding:0 8px 6px;gap:2px}
+.cal-weekdays span{text-align:center;font-size:10px;font-weight:600;letter-spacing:.8px;color:var(--text3);text-transform:uppercase}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:0 8px 10px}
+.cal-day{border-radius:var(--r-xs);padding:4px 3px 3px;cursor:pointer;transition:background .15s;min-height:54px;display:flex;flex-direction:column;gap:2px;position:relative}
+.cal-day:hover{background:var(--surface2)}
+.cal-day.today{background:rgba(232,99,58,.12)}
+.cal-day.selected{background:rgba(232,99,58,.18);outline:1.5px solid rgba(232,99,58,.5)}
+.cal-day.other{opacity:.3}
+.day-num-wrap{display:flex;justify-content:center;margin-bottom:1px}
+.day-num{font-size:12px;font-weight:500;color:var(--text2);width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;line-height:1}
+.cal-day.today .day-num{background:var(--accent);color:#fff;font-weight:700}
+.cal-day.selected:not(.today) .day-num{color:var(--accent);font-weight:600}
+.day-pills{display:flex;flex-direction:column;gap:2px}
+.day-pill{font-size:8.5px;font-weight:600;padding:2px 4px;border-radius:4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.3}
+.day-pill-more{font-size:8px;color:var(--text3);padding:0 3px}
+
+/* ── DAY PREVIEW ── */
+.day-preview{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.preview-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 8px;border-bottom:1px solid var(--border);flex-shrink:0}
+.preview-title{font-size:13px;font-weight:600;color:var(--text)}
+.preview-add{font-size:11px;color:var(--accent);font-weight:600;background:rgba(232,99,58,.12);border:1px solid rgba(232,99,58,.25);border-radius:12px;padding:3px 10px;cursor:pointer}
+.preview-list{flex:1;overflow-y:auto;padding:6px 10px;display:flex;flex-direction:column;gap:5px;scrollbar-width:none}
+.preview-list::-webkit-scrollbar{display:none}
+.preview-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:var(--r-sm);background:var(--surface2);border-left:3px solid var(--accent);cursor:pointer;transition:background .15s}
+.preview-item:hover{background:var(--border)}
+.preview-item-time{font-size:10px;color:var(--text3);min-width:34px;font-weight:500}
+.preview-item-title{flex:1;font-size:12px;color:var(--text);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.preview-item-actions{display:flex;gap:4px}
+.preview-empty{text-align:center;padding:16px;color:var(--text3);font-size:12px;font-style:italic}
+.icon-btn{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text3);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.icon-btn:hover{background:var(--surface2);color:var(--text)}
+.icon-btn.del:hover{border-color:var(--red);color:var(--red)}
+
+/* ── AGENDA ── */
+.scroll-list{flex:1;overflow-y:auto;padding:0 14px 8px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.section-title{font-family:var(--font-display);font-size:26px;font-weight:700;padding:14px 16px 10px;flex-shrink:0;color:var(--text)}
+.agenda-group{margin-bottom:16px}
+.agenda-date-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);padding:0 2px 6px}
+.agenda-item{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--border);margin-bottom:5px;cursor:pointer;transition:background .15s}
+.agenda-item:hover{background:var(--surface2)}
+.agenda-cat-bar{width:3px;height:36px;border-radius:3px;flex-shrink:0}
+.agenda-info{flex:1;min-width:0}
+.agenda-title{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.agenda-meta{font-size:10px;color:var(--text3);display:flex;gap:8px;margin-top:2px;flex-wrap:wrap}
+.agenda-actions{display:flex;gap:5px}
+
+/* ── NOTES ── */
+.notes-grid{flex:1;overflow-y:auto;padding:0 14px 8px;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.note-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;gap:6px}
+.note-card:hover{background:var(--surface2);transform:translateY(-1px)}
+.note-card-title{font-size:13px;font-weight:600;color:var(--text);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.note-card-body{font-size:11px;color:var(--text2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;flex:1}
+.note-card-date{font-size:9px;color:var(--text3);margin-top:auto;display:flex;justify-content:space-between;align-items:center}
+
+/* ── REMINDERS ── */
+.cards-list{flex:1;overflow-y:auto;padding:0 14px 8px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.list-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .15s}
+.list-card:hover{background:var(--surface2)}
+.list-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.list-info{flex:1;min-width:0}
+.list-title{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.list-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.badge-urgent{font-size:10px;font-weight:700;color:var(--yellow);letter-spacing:.3px}
+.bill-amt{font-size:15px;font-weight:700;color:var(--accent);font-family:var(--font-display)}
+
+/* ── BILLS SUMMARY ── */
+.bills-header{padding:0 16px 10px;flex-shrink:0}
+.bills-summary-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 14px;display:flex;gap:20px}
+.bsum-item{display:flex;flex-direction:column;gap:2px}
+.bsum-label{font-size:10px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.8px}
+.bsum-value{font-size:16px;font-weight:700;color:var(--accent);font-family:var(--font-display)}
+.export-btn{margin-left:auto;display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;background:rgba(91,186,143,.12);border:1px solid rgba(91,186,143,.3);color:var(--green);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s}
+.export-btn:active{background:var(--green);color:#000}
+
+/* ── NAV ── */
+.bottom-nav{height:calc(var(--nav) + var(--safe-bot));display:flex;align-items:flex-start;padding-top:4px;padding-bottom:var(--safe-bot);background:rgba(17,11,8,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);flex-shrink:0}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:transparent;border:none;color:var(--text3);cursor:pointer;padding:6px 4px;border-radius:var(--r-sm);transition:color .2s;position:relative}
+.nav-btn.active{color:var(--accent)}
+.nav-btn.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:24px;height:2.5px;background:var(--accent);border-radius:0 0 3px 3px}
+.nav-icon{font-size:20px;line-height:1}
+.nav-label{font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;line-height:1}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:200;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s}
+.overlay.hidden{display:none}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{width:100%;max-width:500px;background:var(--bg2);border:1px solid var(--border2);border-radius:24px 24px 0 0;padding:20px 20px 32px;display:flex;flex-direction:column;gap:14px;max-height:90vh;animation:slideUp .28s cubic-bezier(.34,1.4,.64,1)}
+@keyframes slideUp{from{transform:translateY(50px);opacity:0}to{transform:none;opacity:1}}
+.modal-handle{width:36px;height:3px;border-radius:3px;background:var(--border2);margin:0 auto -6px}
+.modal-header{display:flex;align-items:center;gap:10px}
+.modal-icon{font-size:22px}
+.modal-title{font-family:var(--font-display);font-size:20px;font-weight:700;flex:1;color:var(--text)}
+.modal-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.modal-close:hover{background:rgba(212,91,91,.2);color:var(--red);border-color:var(--red)}
+.form-scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:11px;scrollbar-width:none;padding-right:2px}
+.form-scroll::-webkit-scrollbar{display:none}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-label{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.finput{background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-family:var(--font-body);font-size:14px;padding:10px 12px;width:100%;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none}
+.finput:focus{border-color:var(--accent)}
+.finput option{background:#231710}
+textarea.finput{resize:vertical;min-height:70px}
+.modal-actions{display:flex;gap:10px;flex-shrink:0}
+.btn-primary{flex:1;padding:13px;border-radius:var(--r-sm);background:var(--accent);border:none;color:#fff;font-family:var(--font-body);font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;letter-spacing:.3px}
+.btn-primary:active{opacity:.85}
+.btn-secondary{padding:13px 20px;border-radius:var(--r-sm);background:transparent;border:1px solid var(--border);color:var(--text2);font-family:var(--font-body);font-size:14px;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{background:var(--surface)}
+
+/* ── REMINDER POPUP ── */
+.reminder-list{display:flex;flex-direction:column;gap:8px;max-height:45vh;overflow-y:auto}
+.reminder-popup-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-sm);background:var(--surface);border-left:3px solid var(--yellow)}
+.rpi-title{flex:1;font-size:13px;font-weight:500}
+.rpi-days{font-size:11px;color:var(--yellow);font-weight:700}
+
+/* ── TICKER ── */
+.ticker-bar{background:rgba(232,99,58,.08);border-bottom:1px solid rgba(232,99,58,.15);padding:0 12px;height:30px;display:flex;align-items:center;gap:10px;overflow:hidden;flex-shrink:0}
+.ticker-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--accent);background:rgba(232,99,58,.15);padding:2px 7px;border-radius:5px;white-space:nowrap;flex-shrink:0}
+.ticker-track{flex:1;overflow:hidden}
+.ticker-text{display:inline-block;white-space:nowrap;font-size:11px;color:var(--text2);padding-left:100%;animation:tick 30s linear infinite}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+
+/* ── EMPTY ── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:40px;color:var(--text3);font-size:13px;text-align:center}
+.empty-icon{font-size:36px;opacity:.4}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- REMINDER POPUP -->
+<div id="reminderModal" class="overlay hidden">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-icon">🔔</span>
+      <h3 class="modal-title">Upcoming Reminders</h3>
+      <button class="modal-close" onclick="closeModal('reminderModal')">✕</button>
+    </div>
+    <div id="reminderPopupList" class="reminder-list"></div>
+    <button class="btn-primary" onclick="closeModal('reminderModal')">Got it</button>
+  </div>
+</div>
+
+<!-- EVENT MODAL -->
+<div id="eventModal" class="overlay hidden">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-icon" id="modalIcon">✦</span>
+      <h3 class="modal-title" id="modalTitle">New Event</h3>
+      <button class="modal-close" onclick="closeModal('eventModal')">✕</button>
+    </div>
+    <div class="form-scroll">
+      <input type="hidden" id="evId"/>
+      <div class="form-group">
+        <div class="form-label">Title *</div>
+        <input type="text" id="evTitle" class="finput" placeholder="What's happening?"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">Date *</div>
+          <input type="date" id="evDate" class="finput"/>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Time</div>
+          <input type="time" id="evTime" class="finput"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Category</div>
+        <select id="evCat" class="finput">
+          <option value="event">📅 Event</option>
+          <option value="bill">💸 Bill</option>
+          <option value="note">📝 Note</option>
+          <option value="meeting">🤝 Meeting</option>
+          <option value="birthday">🎂 Birthday</option>
+          <option value="task">✅ Task</option>
+          <option value="holiday">🏖️ Holiday</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Location</div>
+        <input type="text" id="evLoc" class="finput" placeholder="Optional location…"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">Reminder</div>
+          <select id="evReminder" class="finput">
+            <option value="0">None</option>
+            <option value="1">1 day before</option>
+            <option value="2">2 days before</option>
+            <option value="3">3 days before</option>
+            <option value="5">5 days before</option>
+            <option value="7">7 days before</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Repeat</div>
+          <select id="evRepeat" class="finput">
+            <option value="none">None</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Amount (Bills)</div>
+        <input type="number" id="evAmt" class="finput" placeholder="₹ 0.00"/>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Notes</div>
+        <textarea id="evNotes" class="finput" placeholder="Additional notes…" rows="3"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('eventModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveEvent()">Save Event</button>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <!-- HEADER -->
+  <div class="app-header">
+    <div class="header-top">
+      <div class="clock-wrap">
+        <div class="live-dot"></div>
+        <div>
+          <div class="live-clock" id="liveClock">00:00</div>
+          <div class="live-date" id="liveDate">--</div>
+        </div>
+      </div>
+      <button class="fab-top" onclick="openEventModal()">+</button>
+    </div>
+    <div class="app-title">Planner&nbsp;S</div>
+    <div class="app-subtitle" id="appSubtitle">Loading…</div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-bar">
+    <div class="ticker-lbl">TODAY</div>
+    <div class="ticker-track"><div class="ticker-text" id="tickerText">Loading events…</div></div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filter-wrap" id="filterWrap">
+    <button class="chip active" data-f="all"><span>All</span><span class="chip-count" id="cc-all">0</span></button>
+    <button class="chip" data-f="event"><span>Events</span><span class="chip-count" id="cc-event">0</span></button>
+    <button class="chip" data-f="bill"><span>Bills</span><span class="chip-count" id="cc-bill">0</span></button>
+    <button class="chip" data-f="note"><span>Notes</span><span class="chip-count" id="cc-note">0</span></button>
+    <button class="chip" data-f="meeting"><span>Meetings</span><span class="chip-count" id="cc-meeting">0</span></button>
+    <button class="chip" data-f="birthday"><span>Bdays</span><span class="chip-count" id="cc-birthday">0</span></button>
+    <button class="chip" data-f="task"><span>Tasks</span><span class="chip-count" id="cc-task">0</span></button>
+    <button class="chip" data-f="holiday"><span>Holidays</span><span class="chip-count" id="cc-holiday">0</span></button>
+  </div>
+
+  <main>
+    <!-- CALENDAR -->
+    <section id="tabCalendar" class="tab-section active">
+      <div class="cal-container">
+        <div class="cal-card">
+          <div class="cal-card-header">
+            <span class="cal-month-label" id="calLabel">May 2026</span>
+            <div class="cal-nav-group">
+              <button class="nav-arrow" id="prevMonth">‹</button>
+              <button class="today-btn" id="todayBtn">Today</button>
+              <button class="nav-arrow" id="nextMonth">›</button>
+            </div>
+          </div>
+          <div class="cal-weekdays"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+        <div class="day-preview" id="dayPreview">
+          <div class="preview-header">
+            <span id="previewTitle">Today's Events</span>
+            <button class="preview-add" onclick="openEventModal()">+ Add</button>
+          </div>
+          <div class="preview-list" id="previewList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AGENDA -->
+    <section id="tabAgenda" class="tab-section">
+      <div class="section-title">Agenda</div>
+      <div class="scroll-list" id="agendaList"></div>
+    </section>
+
+    <!-- NOTES -->
+    <section id="tabNotes" class="tab-section">
+      <div class="section-title">Notes</div>
+      <div class="notes-grid" id="notesList"></div>
+    </section>
+
+    <!-- REMINDERS -->
+    <section id="tabReminders" class="tab-section">
+      <div class="section-title">Reminders</div>
+      <div class="cards-list" id="remindersList"></div>
+    </section>
+
+    <!-- BILLS -->
+    <section id="tabBills" class="tab-section">
+      <div class="section-title">Bills</div>
+      <div class="bills-header">
+        <div class="bills-summary-bar">
+          <div class="bsum-item">
+            <div class="bsum-label">This Month</div>
+            <div class="bsum-value" id="billsMonth">₹0</div>
+          </div>
+          <div class="bsum-item">
+            <div class="bsum-label">Upcoming</div>
+            <div class="bsum-value" id="billsUpcoming">₹0</div>
+          </div>
+          <button class="export-btn" onclick="exportCSV()">⬇ CSV</button>
+        </div>
+      </div>
+      <div class="cards-list" id="billsList"></div>
+    </section>
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-tab="Calendar">
+      <span class="nav-icon">⊞</span><span class="nav-label">Main</span>
+    </button>
+    <button class="nav-btn" data-tab="Agenda">
+      <span class="nav-icon">☰</span><span class="nav-label">Agenda</span>
+    </button>
+    <button class="nav-btn" data-tab="Reminders">
+      <span class="nav-icon">🔔</span><span class="nav-label">Reminders</span>
+    </button>
+    <button class="nav-btn" data-tab="Bills">
+      <span class="nav-icon">💸</span><span class="nav-label">Bills</span>
+    </button>
+    <button class="nav-btn" data-tab="Notes">
+      <span class="nav-icon">✎</span><span class="nav-label">Notes</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+//  DB
+// ═══════════════════════════════════════
+const DB = (() => {
+  const KEY = 'ps_v3';
+  const get = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
+  const save = a => localStorage.setItem(KEY, JSON.stringify(a));
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
+
+  function advance(d, rep) {
+    const n = new Date(d);
+    if (rep === 'daily')     n.setDate(n.getDate() + 1);
+    if (rep === 'weekly')    n.setDate(n.getDate() + 7);
+    if (rep === 'monthly')   n.setMonth(n.getMonth() + 1);
+    if (rep === 'quarterly') n.setMonth(n.getMonth() + 3);
+    if (rep === 'yearly')    n.setFullYear(n.getFullYear() + 1);
+    return n;
+  }
+
+  function add(ev) {
+    const all = get();
+    ev.id = uid(); ev.createdAt = new Date().toISOString();
+    all.push(ev);
+    if (ev.repeat && ev.repeat !== 'none') {
+      const limit = new Date(); limit.setFullYear(limit.getFullYear() + 2);
+      let cur = new Date(ev.date + 'T00:00:00');
+      for (let i = 0; i < 400; i++) {
+        cur = advance(cur, ev.repeat);
+        if (cur > limit) break;
+        all.push({ ...ev, id: uid(), date: cur.toISOString().slice(0,10), parentId: ev.id, isRecurring: true });
+      }
+    }
+    save(all); return ev;
+  }
+
+  function update(id, ch) { save(get().map(e => e.id === id ? {...e,...ch} : e)); }
+  function remove(id)      { save(get().filter(e => e.id !== id)); }
+  function byId(id)        { return get().find(e => e.id === id); }
+  function forDate(d)      { return get().filter(e => e.date === d); }
+  function forMonth(y, m)  { const p = `${y}-${String(m).padStart(2,'0')}`; return get().filter(e => e.date?.startsWith(p)); }
+  function withReminders() {
+    const today = new Date(); today.setHours(0,0,0,0);
+    return get().filter(e => {
+      if (!e.reminder || e.reminder === '0') return false;
+      const ev = new Date(e.date + 'T00:00:00');
+      const diff = Math.ceil((ev - today) / 864e5);
+      return diff >= 0 && diff <= +e.reminder;
+    });
+  }
+  function byCat(c)  { return c && c !== 'all' ? get().filter(e => e.category === c) : get(); }
+  function counts()  { const a = get(); const r = {all: a.length}; ['event','bill','note','meeting','birthday','task','holiday'].forEach(c => r[c] = a.filter(e=>e.category===c).length); return r; }
+
+  return { get, add, update, remove, byId, forDate, forMonth, withReminders, byCat, counts };
+})();
+
+// ═══════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════
+const CAT_COLORS = { event:'#5b8fd4', bill:'#e8633a', note:'#43c59e', meeting:'#d4aa5b', birthday:'#d48b5b', task:'#5bba8f', holiday:'#9b7fd4' };
+const CAT_EMOJI  = { event:'📅', bill:'💸', note:'📝', meeting:'🤝', birthday:'🎂', task:'✅', holiday:'🏖️' };
+
+const cc = c => CAT_COLORS[c] || '#e8633a';
+const ce = c => CAT_EMOJI[c] || '📅';
+const fmtDate = s => s ? new Date(s+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+const fmtShort = s => s ? new Date(s+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
+const todayStr = () => new Date().toISOString().slice(0,10);
+
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let currentTab = 'Calendar';
+let activeFilter = 'all';
+let calYear, calMonth, selectedDate;
+
+// ═══════════════════════════════════════
+//  CLOCK
+// ═══════════════════════════════════════
+function updateClock() {
+  const now = new Date();
+  document.getElementById('liveClock').textContent =
+    now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false});
+  document.getElementById('liveDate').textContent =
+    now.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'}) + ' · IST';
+}
+setInterval(updateClock, 1000); updateClock();
+
+// ═══════════════════════════════════════
+//  TICKER
+// ═══════════════════════════════════════
+function renderTicker() {
+  const td = todayStr();
+  const tm = new Date(); tm.setDate(tm.getDate()+1);
+  const tmStr = tm.toISOString().slice(0,10);
+  const tEvs = DB.forDate(td);
+  const tmEvs = DB.forDate(tmStr);
+  let items = tEvs.map(e => `${ce(e.category)} ${e.time ? e.time+' · ' : ''}${e.title}`);
+  if (tmEvs.length) { items.push('│ Tomorrow:'); tmEvs.forEach(e => items.push(`${ce(e.category)} ${e.title}`)); }
+  if (!items.length) items = ['Nothing scheduled today — clear skies ✨'];
+  document.getElementById('tickerText').textContent = items.join('   ·   ');
+  setTimeout(renderTicker, 60000);
+}
+
+// ═══════════════════════════════════════
+//  SUBTITLE + CHIP COUNTS
+// ═══════════════════════════════════════
+function updateMeta() {
+  const all = DB.get();
+  const td = todayStr();
+  const thisMonth = all.filter(e => e.date?.slice(0,7) === td.slice(0,7));
+  const rems = DB.withReminders().length;
+  document.getElementById('appSubtitle').textContent =
+    `${thisMonth.length} entries this month · ${rems} reminder${rems !== 1 ? 's' : ''}`;
+  const c = DB.counts();
+  Object.keys(c).forEach(k => {
+    const el = document.getElementById('cc-'+k);
+    if (el) el.textContent = c[k];
+  });
+}
+
+// ═══════════════════════════════════════
+//  CALENDAR
+// ═══════════════════════════════════════
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function renderCalendar() {
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  document.getElementById('calLabel').textContent = `${MONTHS[calMonth-1]} ${calYear}`;
+  const td = todayStr();
+  const evMap = {};
+  DB.forMonth(calYear, calMonth).forEach(e => {
+    if (activeFilter !== 'all' && e.category !== activeFilter) return;
+    (evMap[e.date] = evMap[e.date] || []).push(e);
+  });
+  const firstDay = new Date(calYear, calMonth-1, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth, 0).getDate();
+  const daysInPrev  = new Date(calYear, calMonth-1, 0).getDate();
+  const total = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+
+  for (let i = 0; i < total; i++) {
+    let day, mo = calMonth, yr = calYear, other = false;
+    if (i < firstDay) { day = daysInPrev - firstDay + i + 1; mo = calMonth - 1; other = true; if (mo < 1) { mo = 12; yr--; } }
+    else if (i >= firstDay + daysInMonth) { day = i - firstDay - daysInMonth + 1; mo = calMonth + 1; other = true; if (mo > 12) { mo = 1; yr++; } }
+    else { day = i - firstDay + 1; }
+    const ds = `${yr}-${String(mo).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const evs = evMap[ds] || [];
+    const cell = document.createElement('div');
+    cell.className = 'cal-day' + (other?' other':'') + (ds===td?' today':'') + (ds===selectedDate?' selected':'');
+    cell.dataset.date = ds;
+    cell.innerHTML = `<div class="day-num-wrap"><div class="day-num">${day}</div></div>`;
+    if (evs.length) {
+      const pillBox = document.createElement('div');
+      pillBox.className = 'day-pills';
+      const show = Math.min(evs.length, 2);
+      evs.slice(0, show).forEach(ev => {
+        const p = document.createElement('div');
+        p.className = 'day-pill';
+        p.style.cssText = `background:${cc(ev.category)}28;color:${cc(ev.category)};border-left:2px solid ${cc(ev.category)}`;
+        p.textContent = (ev.time ? ev.time.slice(0,5)+' ' : '') + ev.title;
+        pillBox.appendChild(p);
+      });
+      if (evs.length > show) {
+        const m = document.createElement('div');
+        m.className = 'day-pill-more';
+        m.textContent = `+${evs.length - show} more`;
+        pillBox.appendChild(m);
+      }
+      cell.appendChild(pillBox);
+    }
+    cell.addEventListener('click', () => {
+      document.querySelectorAll('.cal-day.selected').forEach(c => c.classList.remove('selected'));
+      cell.classList.add('selected');
+      selectedDate = ds;
+      renderDayPreview(ds);
+    });
+    grid.appendChild(cell);
+  }
+}
+
+function renderDayPreview(ds) {
+  const td = todayStr();
+  const title = document.getElementById('previewTitle');
+  if (ds === td) title.textContent = "Today's Events";
+  else { const d = new Date(ds+'T00:00:00'); title.textContent = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}); }
+  let evs = DB.forDate(ds);
+  if (activeFilter !== 'all') evs = evs.filter(e => e.category === activeFilter);
+  evs.sort((a,b) => (a.time||'99:99').localeCompare(b.time||'99:99'));
+  const list = document.getElementById('previewList');
+  list.innerHTML = '';
+  if (!evs.length) { list.innerHTML = '<div class="preview-empty">No events — tap + to add</div>'; return; }
+  evs.forEach(ev => {
+    const item = document.createElement('div');
+    item.className = 'preview-item';
+    item.style.borderLeftColor = cc(ev.category);
+    item.innerHTML = `
+      <span class="preview-item-time">${ev.time||'--:--'}</span>
+      <span class="preview-item-title">${ce(ev.category)} ${ev.title}</span>
+      <div class="preview-item-actions">
+        <button class="icon-btn" onclick="editEvent('${ev.id}');event.stopPropagation()">✎</button>
+        <button class="icon-btn del" onclick="delEvent('${ev.id}');event.stopPropagation()">✕</button>
+      </div>`;
+    list.appendChild(item);
+  });
+}
+
+// ═══════════════════════════════════════
+//  AGENDA
+// ═══════════════════════════════════════
+function renderAgenda() {
+  const el = document.getElementById('agendaList');
+  let evs = DB.byCat(activeFilter);
+  evs.sort((a,b) => a.date.localeCompare(b.date)||(a.time||'').localeCompare(b.time||''));
+  const td = todayStr();
+  const tm = new Date(); tm.setDate(tm.getDate()+1);
+  const tmStr = tm.toISOString().slice(0,10);
+  const groups = {};
+  evs.forEach(e => (groups[e.date] = groups[e.date]||[]).push(e));
+  el.innerHTML = '';
+  if (!Object.keys(groups).length) { el.innerHTML = '<div class="empty"><div class="empty-icon">☰</div>No events yet</div>'; return; }
+  Object.keys(groups).sort().forEach(ds => {
+    const g = document.createElement('div');
+    g.className = 'agenda-group';
+    let lbl = new Date(ds+'T00:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric',year:'numeric'});
+    if (ds === td) lbl = '📌 Today';
+    else if (ds === tmStr) lbl = '⏩ Tomorrow';
+    g.innerHTML = `<div class="agenda-date-label">${lbl}</div>`;
+    groups[ds].forEach(ev => {
+      const item = document.createElement('div');
+      item.className = 'agenda-item';
+      item.innerHTML = `
+        <div class="agenda-cat-bar" style="background:${cc(ev.category)}"></div>
+        <div class="agenda-info">
+          <div class="agenda-title">${ce(ev.category)} ${ev.title}</div>
+          <div class="agenda-meta">
+            ${ev.time?`<span>⏰ ${ev.time}</span>`:''}
+            ${ev.location?`<span>📍 ${ev.location}</span>`:''}
+            ${ev.repeat&&ev.repeat!=='none'?`<span>🔁 ${ev.repeat}</span>`:''}
+            ${ev.amount?`<span>₹${parseFloat(ev.amount).toLocaleString('en-IN')}</span>`:''}
+          </div>
+        </div>
+        <div class="agenda-actions">
+          <button class="icon-btn" onclick="editEvent('${ev.id}')">✎</button>
+          <button class="icon-btn del" onclick="delEvent('${ev.id}')">✕</button>
+        </div>`;
+      g.appendChild(item);
+    });
+    el.appendChild(g);
+  });
+}
+
+// ═══════════════════════════════════════
+//  NOTES
+// ═══════════════════════════════════════
+function renderNotes() {
+  const el = document.getElementById('notesList');
+  const evs = DB.byCat('note').sort((a,b) => b.createdAt?.localeCompare(a.createdAt)||0);
+  el.innerHTML = '';
+  if (!evs.length) { el.innerHTML = '<div class="empty" style="grid-column:span 2"><div class="empty-icon">📝</div>No notes yet</div>'; return; }
+  evs.forEach(ev => {
+    const card = document.createElement('div');
+    card.className = 'note-card';
+    card.style.borderTop = `3px solid ${cc('note')}`;
+    card.innerHTML = `
+      <div class="note-card-title">${ev.title}</div>
+      ${ev.notes?`<div class="note-card-body">${ev.notes}</div>`:''}
+      <div class="note-card-date">
+        <span>${fmtShort(ev.date)}</span>
+        <div style="display:flex;gap:3px">
+          <button class="icon-btn" style="width:22px;height:22px;font-size:11px" onclick="editEvent('${ev.id}')">✎</button>
+          <button class="icon-btn del" style="width:22px;height:22px;font-size:11px" onclick="delEvent('${ev.id}')">✕</button>
+        </div>
+      </div>`;
+    el.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════
+//  REMINDERS
+// ═══════════════════════════════════════
+function renderReminders() {
+  const el = document.getElementById('remindersList');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const evs = DB.get().filter(e=>e.reminder&&e.reminder!=='0').sort((a,b)=>a.date.localeCompare(b.date));
+  el.innerHTML = '';
+  if (!evs.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🔔</div>No reminders set</div>'; return; }
+  evs.forEach(ev => {
+    const evDate = new Date(ev.date+'T00:00:00');
+    const diff = Math.ceil((evDate - today) / 864e5);
+    const daysLabel = diff<0?`${Math.abs(diff)}d ago`:diff===0?'Today!':diff===1?'Tomorrow':`in ${diff}d`;
+    const urgentColor = diff>=0&&diff<=+ev.reminder?'var(--yellow)':'var(--text3)';
+    const card = document.createElement('div');
+    card.className = 'list-card';
+    card.innerHTML = `
+      <div class="list-icon" style="background:${cc(ev.category)}22">${ce(ev.category)}</div>
+      <div class="list-info">
+        <div class="list-title">${ev.title}</div>
+        <div class="list-sub">${fmtDate(ev.date)} · Remind ${ev.reminder}d before</div>
+      </div>
+      <div class="list-right">
+        <span class="badge-urgent" style="color:${urgentColor}">${daysLabel}</span>
+        <div style="display:flex;gap:4px">
+          <button class="icon-btn" onclick="editEvent('${ev.id}')">✎</button>
+          <button class="icon-btn del" onclick="delEvent('${ev.id}')">✕</button>
+        </div>
+      </div>`;
+    el.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════
+//  BILLS
+// ═══════════════════════════════════════
+function renderBills() {
+  const el = document.getElementById('billsList');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const bills = DB.byCat('bill').sort((a,b)=>a.date.localeCompare(b.date));
+  const thisMonth = bills.filter(b=>b.date?.slice(0,7)===todayStr().slice(0,7));
+  const upcoming  = bills.filter(b=>new Date(b.date+'T00:00:00')>=today);
+  document.getElementById('billsMonth').textContent = '₹'+thisMonth.reduce((s,b)=>s+(+b.amount||0),0).toLocaleString('en-IN',{minimumFractionDigits:0});
+  document.getElementById('billsUpcoming').textContent = '₹'+upcoming.reduce((s,b)=>s+(+b.amount||0),0).toLocaleString('en-IN',{minimumFractionDigits:0});
+  el.innerHTML = '';
+  if (!bills.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">💸</div>No bills yet</div>'; return; }
+  bills.forEach(ev => {
+    const evDate = new Date(ev.date+'T00:00:00');
+    const diff = Math.ceil((evDate - today)/864e5);
+    const card = document.createElement('div');
+    card.className = 'list-card';
+    card.style.opacity = diff < 0 ? '.55' : '1';
+    card.innerHTML = `
+      <div class="list-icon" style="background:rgba(232,99,58,.15)">💸</div>
+      <div class="list-info">
+        <div class="list-title">${ev.title}</div>
+        <div class="list-sub">${fmtDate(ev.date)}${ev.repeat&&ev.repeat!=='none'?' · 🔁 '+ev.repeat:''}${diff<0?' · <span style="color:var(--red)">Overdue</span>':''}</div>
+      </div>
+      <div class="list-right">
+        ${ev.amount?`<div class="bill-amt">₹${parseFloat(ev.amount).toLocaleString('en-IN',{minimumFractionDigits:0})}</div>`:''}
+        ${diff>=0&&diff<=7?`<span class="badge-urgent">Due in ${diff}d</span>`:''}
+        <div style="display:flex;gap:4px">
+          <button class="icon-btn" onclick="editEvent('${ev.id}')">✎</button>
+          <button class="icon-btn del" onclick="delEvent('${ev.id}')">✕</button>
+        </div>
+      </div>`;
+    el.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════
+//  EXPORT CSV
+// ═══════════════════════════════════════
+function exportCSV() {
+  const headers = ['Title','Date','Time','Category','Location','Amount','Reminder','Repeat','Notes','CreatedAt'];
+  const rows = DB.get().map(e => [
+    `"${(e.title||'').replace(/"/g,'""')}"`,
+    e.date||'',e.time||'',e.category||'',
+    `"${(e.location||'').replace(/"/g,'""')}"`,
+    e.amount||'',e.reminder||'',e.repeat||'',
+    `"${(e.notes||'').replace(/"/g,'""')}"`,e.createdAt||''
+  ].join(','));
+  const csv = [headers.join(','),...rows].join('\n');
+  const a = Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([csv],{type:'text/csv'})),download:`PlannerS_${todayStr()}.csv`});
+  a.click();
+}
+
+// ═══════════════════════════════════════
+//  MODAL HELPERS
+// ═══════════════════════════════════════
+function openModal(id)  { document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+function openEventModal(defaultCat) {
+  document.getElementById('evId').value    = '';
+  document.getElementById('modalTitle').textContent = 'New Event';
+  document.getElementById('modalIcon').textContent  = '✦';
+  document.getElementById('evTitle').value = '';
+  document.getElementById('evDate').value  = todayStr();
+  document.getElementById('evTime').value  = '';
+  document.getElementById('evCat').value   = defaultCat || 'event';
+  document.getElementById('evLoc').value   = '';
+  document.getElementById('evReminder').value = '0';
+  document.getElementById('evRepeat').value   = 'none';
+  document.getElementById('evAmt').value   = '';
+  document.getElementById('evNotes').value = '';
+  openModal('eventModal');
+}
+
+function editEvent(id) {
+  const ev = DB.byId(id);
+  if (!ev) return;
+  document.getElementById('evId').value       = ev.id;
+  document.getElementById('modalTitle').textContent = 'Edit Event';
+  document.getElementById('modalIcon').textContent  = '✎';
+  document.getElementById('evTitle').value    = ev.title;
+  document.getElementById('evDate').value     = ev.date;
+  document.getElementById('evTime').value     = ev.time||'';
+  document.getElementById('evCat').value      = ev.category;
+  document.getElementById('evLoc').value      = ev.location||'';
+  document.getElementById('evReminder').value = ev.reminder||'0';
+  document.getElementById('evRepeat').value   = ev.repeat||'none';
+  document.getElementById('evAmt').value      = ev.amount||'';
+  document.getElementById('evNotes').value    = ev.notes||'';
+  openModal('eventModal');
+}
+
+function saveEvent() {
+  const title = document.getElementById('evTitle').value.trim();
+  const date  = document.getElementById('evDate').value;
+  if (!title || !date) { alert('Title and date are required'); return; }
+  const ev = {
+    title, date,
+    time:     document.getElementById('evTime').value,
+    category: document.getElementById('evCat').value,
+    location: document.getElementById('evLoc').value.trim(),
+    reminder: document.getElementById('evReminder').value,
+    repeat:   document.getElementById('evRepeat').value,
+    amount:   document.getElementById('evAmt').value,
+    notes:    document.getElementById('evNotes').value.trim()
+  };
+  const id = document.getElementById('evId').value;
+  if (id) DB.update(id, ev); else DB.add(ev);
+  closeModal('eventModal');
+  refreshAll();
+}
+
+function delEvent(id) {
+  if (!confirm('Delete this event?')) return;
+  DB.remove(id); refreshAll();
+}
+
+// ═══════════════════════════════════════
+//  REMINDER POPUP
+// ═══════════════════════════════════════
+function checkReminders() {
+  const evs = DB.withReminders();
+  if (!evs.length) return;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const list = document.getElementById('reminderPopupList');
+  list.innerHTML = '';
+  evs.forEach(ev => {
+    const diff = Math.ceil((new Date(ev.date+'T00:00:00') - today)/864e5);
+    const item = document.createElement('div');
+    item.className = 'reminder-popup-item';
+    item.innerHTML = `<span style="font-size:20px">${ce(ev.category)}</span><span class="rpi-title">${ev.title}</span><span class="rpi-days">${diff===0?'Today!':diff===1?'Tomorrow':`in ${diff}d`}</span>`;
+    list.appendChild(item);
+  });
+  openModal('reminderModal');
+}
+
+// ═══════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab'+tab).classList.add('active');
+  // Show filter only on Calendar+Agenda
+  document.getElementById('filterWrap').style.display = (tab==='Calendar'||tab==='Agenda') ? 'flex' : 'none';
+  if (tab==='Agenda')    renderAgenda();
+  if (tab==='Notes')     renderNotes();
+  if (tab==='Reminders') renderReminders();
+  if (tab==='Bills')     renderBills();
+  if (tab==='Calendar')  { renderCalendar(); renderDayPreview(selectedDate); }
+}
+
+// ═══════════════════════════════════════
+//  REFRESH ALL
+// ═══════════════════════════════════════
+function refreshAll() {
+  updateMeta(); renderTicker();
+  renderCalendar(); renderDayPreview(selectedDate);
+  if (currentTab==='Agenda')    renderAgenda();
+  if (currentTab==='Notes')     renderNotes();
+  if (currentTab==='Reminders') renderReminders();
+  if (currentTab==='Bills')     renderBills();
+}
+
+// ═══════════════════════════════════════
+//  SEED DATA
+// ═══════════════════════════════════════
+function seed() {
+  if (localStorage.getItem('ps_seeded_v3')) return;
+  const today = new Date();
+  const off = n => { const d=new Date(today); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); };
+  [
+    {title:'Team Standup',date:off(0),time:'09:30',category:'meeting',reminder:'1',repeat:'daily'},
+    {title:'Electricity Bill',date:off(3),category:'bill',amount:'2400',reminder:'3',repeat:'monthly'},
+    {title:'Recipe ideas',date:off(0),category:'note',notes:'Try the new Kerala fish curry recipe. Need: mustard seeds, curry leaves, kokum.'},
+    {title:"Mum's Birthday",date:off(5),category:'birthday',reminder:'7',repeat:'yearly'},
+    {title:'Dentist',date:off(2),time:'11:00',category:'event',location:'City Dental Clinic',reminder:'2'},
+    {title:'Netflix',date:off(10),category:'bill',amount:'649',repeat:'monthly',reminder:'3'},
+    {title:'Follow up with client',date:off(4),category:'task'},
+    {title:'Sessions with coach',date:off(5),time:'16:00',category:'meeting',repeat:'weekly'},
+    {title:'Ekadashi',date:off(13),category:'holiday',reminder:'5',repeat:'monthly'},
+    {title:'2 interviews',date:off(6),category:'event',notes:'Prep for backend and system design rounds'},
+  ].forEach(e => DB.add({repeat:'none',reminder:'0',...e}));
+  localStorage.setItem('ps_seeded_v3','1');
+}
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+(function init() {
+  // Register SW
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+  // Init cal state
+  const now = new Date();
+  calYear = now.getFullYear(); calMonth = now.getMonth()+1; selectedDate = todayStr();
+
+  seed();
+  updateMeta();
+  renderTicker();
+  renderCalendar();
+  renderDayPreview(selectedDate);
+
+  // Nav clicks
+  document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+
+  // Cal nav
+  document.getElementById('prevMonth').addEventListener('click', () => {
+    calMonth--; if(calMonth<1){calMonth=12;calYear--;} renderCalendar();
+  });
+  document.getElementById('nextMonth').addEventListener('click', () => {
+    calMonth++; if(calMonth>12){calMonth=1;calYear++;} renderCalendar();
+  });
+  document.getElementById('todayBtn').addEventListener('click', () => {
+    const n=new Date(); calYear=n.getFullYear(); calMonth=n.getMonth()+1;
+    selectedDate=todayStr(); renderCalendar(); renderDayPreview(selectedDate);
+  });
+
+  // Filters
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      activeFilter = chip.dataset.f;
+      renderCalendar();
+      if (currentTab==='Agenda') renderAgenda();
+      renderDayPreview(selectedDate);
+    });
+  });
+
+  // Reminder popup
+  setTimeout(checkReminders, 800);
+})();
+</script>
+</body>
+</html>
