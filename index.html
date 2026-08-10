@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Planner S"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#100b07"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="icon" href="icon.svg" type="image/svg+xml"/>
+<title>Planner S</title>
+<meta name="referrer" content="no-referrer"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+input,select,textarea,button{font-family:inherit;-webkit-appearance:none;appearance:none}
+
+:root{--_sab:env(safe-area-inset-bottom,0px);
+  /* EMBER — default theme. Bound to :root so a missing data-theme
+     attribute can never blank the UI (playbook 6). */
+  --bg:#0e0a06;--bg2:#1b1109;
+  --glow1:rgba(240,112,63,.13);--glow2:rgba(92,199,154,.05);
+  --sur:rgba(255,255,255,.05);--sur2:rgba(255,255,255,.085);
+  --surf:rgba(255,255,255,.032);
+  --bdr:rgba(255,255,255,.09);--bdr2:rgba(255,255,255,.15);
+  --tx:#f6efe8;--tx2:rgba(246,239,232,.88);--tx3:rgba(246,239,232,.56);
+  --ac:#f0703f;--ac2:rgba(240,112,63,.15);--ac3:rgba(240,112,63,.30);
+  --acg:linear-gradient(135deg,#f0703f 0%,#e04d2a 100%);
+  --acs:rgba(240,112,63,.40);--onac:#fff;
+  --glass:rgba(26,16,10,.62);--glassbd:rgba(255,255,255,.13);
+  --grn:#5cc79a;--yel:#e0b464;--red:#e06b6b;
+  --r:18px;--rsm:12px;--rlg:26px;--rnav:26px;
+  --sh:0 4px 20px rgba(0,0,0,.35);--shs:0 2px 10px rgba(0,0,0,.25);
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+  --ff:ui-rounded,'SF Pro Rounded','Avenir Next','Avenir',system-ui,sans-serif;
+  --fb:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,'Segoe UI',sans-serif;
+  --sat:env(safe-area-inset-top,0px);
+}
+/* ── THEMES ─────────────────────────────────────────────────────── */
+html[data-theme="orchid"]{
+  --bg:#0d0816;--bg2:#1a1030;
+  --glow1:rgba(168,85,247,.18);--glow2:rgba(236,72,153,.07);
+  --ac:#a855f7;--ac2:rgba(168,85,247,.16);--ac3:rgba(168,85,247,.32);
+  --acg:linear-gradient(135deg,#c084fc 0%,#8b3ff0 100%);
+  --acs:rgba(168,85,247,.42);
+  --tx:#f2ecfb;--tx2:rgba(242,236,251,.88);--tx3:rgba(242,236,251,.56);
+  --glass:rgba(22,14,40,.62);
+  --grn:#5fd3a6;--yel:#e6c06a;--red:#f0708f;
+}
+html[data-theme="midnight"]{
+  --bg:#060b14;--bg2:#0e1a2c;
+  --glow1:rgba(56,189,248,.14);--glow2:rgba(129,140,248,.07);
+  --ac:#38bdf8;--ac2:rgba(56,189,248,.15);--ac3:rgba(56,189,248,.30);
+  --acg:linear-gradient(135deg,#5cc9fb 0%,#2b8fd4 100%);
+  --acs:rgba(56,189,248,.38);--onac:#04202f;
+  --tx:#eaf3fb;--tx2:rgba(234,243,251,.88);--tx3:rgba(234,243,251,.55);
+  --glass:rgba(10,20,34,.64);
+  --grn:#4fd1a5;--yel:#f0c674;--red:#f07b7b;
+}
+html[data-theme="forest"]{
+  --bg:#05100c;--bg2:#0e2019;
+  --glow1:rgba(52,211,153,.13);--glow2:rgba(132,204,22,.06);
+  --ac:#34d399;--ac2:rgba(52,211,153,.15);--ac3:rgba(52,211,153,.30);
+  --acg:linear-gradient(135deg,#5ee7b5 0%,#22a173 100%);
+  --acs:rgba(52,211,153,.36);--onac:#04231a;
+  --tx:#e9f6f0;--tx2:rgba(233,246,240,.88);--tx3:rgba(233,246,240,.55);
+  --glass:rgba(8,26,20,.64);
+  --grn:#5ee7b5;--yel:#e8c877;--red:#f08585;
+}
+
+html{height:100%;height:-webkit-fill-available;}
+body{
+  margin:0;padding:0;width:100%;min-height:100%;overflow:hidden;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-tap-highlight-color:transparent;
+  background:
+    radial-gradient(120% 60% at 50% -10%, var(--glow1) 0%, transparent 55%),
+    radial-gradient(80% 50% at 100% 0%, var(--glow2) 0%, transparent 50%),
+    var(--bg);
+}
+body{
+  margin:0;padding:0;width:100%;min-height:100%;overflow:hidden;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-tap-highlight-color:transparent;
+  background:
+    radial-gradient(120% 60% at 50% -10%, var(--glow1) 0%, transparent 55%),
+    radial-gradient(80% 50% at 100% 0%, var(--glow2) 0%, transparent 50%),
+    var(--bg);
+}
+
+/* APP — pinned to all 4 screen edges, no height property */
+#app{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  /* dynamic viewport height — fills the visible screen */
+  height:100vh;
+  height:100svh;
+  height:100dvh;
+  box-sizing:border-box;
+  /* ONLY top + sides padded here. Bottom safe-area is owned by the
+     nav so its background reaches the true screen edge (no gap). */
+  padding-top:env(safe-area-inset-top, 0px);
+  padding-left:env(safe-area-inset-left, 0px);
+  padding-right:env(safe-area-inset-right, 0px);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+/* HEADER */
+.hdr{
+  flex:0 0 auto;
+  padding:18px 20px 14px;
+  display:flex;flex-direction:column;gap:10px;
+  min-height:84px;
+}
+.hdr-r1{display:flex;align-items:center;justify-content:space-between;}
+.clkpill{display:flex;align-items:center;gap:7px;background:var(--sur);border:1px solid var(--bdr);border-radius:18px;padding:5px 13px 5px 9px;box-shadow:var(--shs);}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ac);flex-shrink:0;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,99,58,.55)}50%{box-shadow:0 0 0 5px rgba(232,99,58,0)}}
+.clkt{font-size:15px;font-weight:700;letter-spacing:.5px;color:var(--tx);}
+.clksep{color:var(--tx3);font-size:11px;}
+.clkd{font-size:11px;color:var(--tx2);}
+.addbtn{width:44px;height:44px;border-radius:14px;background:var(--acg);border:none;color:#fff;font-size:28px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 18px var(--acs);transition:transform var(--tr),box-shadow var(--tr);}
+.addbtn:active{transform:scale(.92) rotate(90deg);}
+.addbtn:active{transform:scale(.88);}
+.hdr-r2{display:flex;align-items:baseline;gap:9px;}
+.apptitle{font-family:var(--ff);font-size:31px;font-weight:800;letter-spacing:-.9px;line-height:1;color:var(--tx);}
+.appsub{font-size:10px;color:var(--tx3);}
+
+/* TICKER */
+.tkr{flex:0 0 34px;height:34px;display:flex;align-items:center;gap:10px;padding:0 18px;margin:4px 0 2px;background:var(--ac2);border-top:1px solid var(--ac3);border-bottom:1px solid var(--ac3);overflow:hidden;}
+.tkrlbl{font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--ac);background:var(--ac2);border-radius:4px;padding:2px 6px;white-space:nowrap;flex-shrink:0;}
+.tkrtrack{flex:1;overflow:hidden;}
+.tkrtxt{display:inline-block;white-space:nowrap;font-size:12px;color:var(--tx);padding-left:100%;animation:marquee 30s linear infinite;}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+
+/* FILTERS */
+.flt{flex:0 0 50px;height:50px;display:flex;align-items:center;gap:9px;padding:6px 18px;overflow-x:auto;scrollbar-width:none;}
+.flt::-webkit-scrollbar{display:none}
+.chip{display:flex;align-items:center;gap:6px;padding:8px 15px;border-radius:18px;border:1px solid var(--bdr);background:transparent;color:var(--tx2);font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s;}
+.chip.on{background:var(--acg);border-color:transparent;color:var(--onac);font-weight:600;box-shadow:0 3px 12px var(--acs);}
+.cc{background:rgba(0,0,0,.2);border-radius:7px;padding:1px 5px;font-size:9px;font-weight:700;min-width:15px;text-align:center;}
+.chip:not(.on) .cc{background:var(--sur2);}
+
+/* MAIN */
+main{flex:1 1 0;min-height:0;overflow:hidden;position:relative;}
+.tab{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 84px);}
+.tab::-webkit-scrollbar{display:none;}
+.tab.on{display:flex;animation:tabIn .32s cubic-bezier(.4,0,.2,1);}
+@keyframes tabIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* CALENDAR TAB */
+.calwrap{flex:0 0 auto;display:flex;flex-direction:column;padding:14px 16px 10px;gap:22px;overflow:visible;}
+.calcard{flex:0 0 auto;display:flex;flex-direction:column;background:transparent;border:none;border-radius:0;overflow:visible;}
+.calhdr{display:flex;align-items:center;justify-content:space-between;padding:6px 6px 10px;height:auto;}
+.calmonth{font-family:var(--ff);font-size:22px;letter-spacing:-.4px;font-weight:700;color:var(--tx);}
+.calnav{display:flex;align-items:center;gap:5px;}
+.tbtn{font-size:10px;font-weight:600;color:var(--ac);background:var(--ac2);border:1px solid var(--ac3);border-radius:12px;padding:3px 9px;cursor:pointer;}
+.arr{width:27px;height:27px;border-radius:50%;background:var(--sur2);border:1px solid var(--bdr);color:var(--tx2);font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.arr:active{background:var(--bdr2);}
+.wdays{display:grid;grid-template-columns:repeat(7,1fr);height:30px;padding:0 4px;margin-bottom:4px;}
+.wdays span{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;letter-spacing:1.4px;color:var(--tx3);text-transform:uppercase;}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(74px,auto);gap:2px;padding:8px 4px 10px;}
+.cday{display:flex;flex-direction:column;align-items:center;cursor:pointer;background:transparent;border:none;border-radius:14px;padding-top:6px;overflow:hidden;transition:background var(--tr);}
+.cday:active{background:var(--sur2);}
+.cday.oth{opacity:.28;}
+.cday.tod{background:transparent;}
+.cday.sel{background:rgba(232,99,58,.2);outline:1.5px solid var(--ac3);outline-offset:-1px;}
+.dnw{display:flex;justify-content:center;flex-shrink:0;height:32px;}
+.dnum{min-width:30px;height:30px;padding:0 6px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:var(--tx);line-height:1;letter-spacing:-.2px;}
+.cday.tod .dnum{background:var(--acg);color:var(--onac);font-weight:800;border-radius:11px;box-shadow:0 3px 12px var(--acs);}
+.cday.sel:not(.tod) .dnum{color:var(--ac);font-weight:600;}
+.dpills{width:100%;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 3px 0;overflow:hidden;}
+.dpill{max-width:100%;font-size:9px;font-weight:700;padding:2px 6px;border-radius:7px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.4;text-align:center;}
+.dpmore{flex-shrink:0;font-size:8px;color:var(--tx2);padding:0 4px;line-height:1.3;font-weight:600;}
+
+/* DAY PREVIEW */
+.dayprev{flex:0 0 auto;min-height:150px;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);display:flex;flex-direction:column;overflow:hidden;}
+.dphdr{display:flex;align-items:center;justify-content:space-between;padding:7px 12px 6px;border-bottom:1px solid var(--bdr);flex-shrink:0;}
+.dptitle{font-size:14px;font-weight:600;color:var(--tx);}
+.dpadd{font-size:10px;color:var(--ac);font-weight:600;background:var(--ac2);border:1px solid var(--ac3);border-radius:10px;padding:3px 9px;cursor:pointer;}
+.dplist{flex:1;overflow-y:auto;padding:5px 8px;display:flex;flex-direction:column;gap:4px;scrollbar-width:none;}
+.dplist::-webkit-scrollbar{display:none}
+.dpitem{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:8px;background:var(--sur2);border-left:3px solid var(--ac);flex-shrink:0;}
+.dptime{font-size:11px;color:var(--ac);min-width:34px;font-weight:600;}
+.dpname{flex:1;font-size:13px;color:var(--tx);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.dpacts{display:flex;gap:3px;flex-shrink:0;}
+.ibtn{width:24px;height:24px;border-radius:6px;border:1px solid var(--bdr);background:transparent;color:var(--tx3);font-size:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.ibtn:active{background:var(--sur2);color:var(--tx);}
+.ibtn.d:active{border-color:var(--red);color:var(--red);}
+.dpempty{text-align:center;padding:14px;color:var(--tx2);font-size:13px;font-style:italic;}
+
+/* OTHER TABS */
+.tabttl{font-family:var(--ff);font-size:26px;font-weight:700;letter-spacing:-.4px;padding:16px 20px 8px;flex-shrink:0;color:var(--tx);}
+.slist{flex:1;overflow-y:auto;padding:0 10px 8px;scrollbar-width:thin;scrollbar-color:var(--bdr) transparent;}
+.aggrp{margin-bottom:11px;}
+.aglbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ac);padding:0 2px 4px;}
+.agitem{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--rsm);background:var(--sur);border:1px solid var(--bdr);margin-bottom:4px;cursor:pointer;}
+.agitem:active{background:var(--sur2);}
+.agbar{width:3px;height:30px;border-radius:3px;flex-shrink:0;}
+.aginfo{flex:1;min-width:0;}
+.agttl{font-size:14px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.agmet{font-size:11px;color:var(--tx2);display:flex;gap:7px;margin-top:2px;flex-wrap:wrap;}
+.agacts{display:flex;gap:4px;flex-shrink:0;}
+.ngrid{flex:1;overflow-y:auto;padding:0 10px 8px;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start;}
+.ncard{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:11px;display:flex;flex-direction:column;gap:5px;min-height:78px;cursor:pointer;}
+.ncard:active{background:var(--sur2);}
+.ncard-t{font-size:13px;font-weight:600;color:var(--tx);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.ncard-b{font-size:10.5px;color:var(--tx2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;flex:1;}
+.ncard-f{font-size:9px;color:var(--tx3);display:flex;justify-content:space-between;align-items:center;margin-top:auto;}
+.clist{flex:0 0 auto;padding:4px 18px 18px;display:flex;flex-direction:column;gap:11px;}
+.lcard{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:15px 16px;display:flex;align-items:center;gap:13px;cursor:pointer;}
+.lcard:active{background:var(--sur2);}
+.licon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.linfo{flex:1;min-width:0;}
+.lttl{font-size:14px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lsub{font-size:11px;color:var(--tx2);margin-top:2px;}
+.lright{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.lurge{font-size:10px;font-weight:700;color:var(--yel);}
+.bamt{font-size:14px;font-weight:700;color:var(--ac);font-family:var(--ff);}
+.bsum{flex-shrink:0;display:flex;align-items:center;gap:14px;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rsm);margin:0 10px 7px;padding:8px 12px;}
+.bsuml{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.7px;font-weight:500;}
+.bsumv{font-size:14px;font-weight:700;color:var(--ac);font-family:var(--ff);}
+.csvbtn{margin-left:auto;padding:5px 10px;border-radius:14px;background:rgba(92,199,154,.13);border:1px solid rgba(92,199,154,.30);color:var(--grn);font-size:10px;font-weight:600;cursor:pointer;}
+.csvbtn:active{background:var(--grn);color:#000;}
+
+/* =============================================
+   BOTTOM NAV — fixed height, no safe area math
+   ============================================= */
+.bnav{
+  position:fixed;
+  left:14px;right:14px;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 12px);
+  height:64px;
+  z-index:200;
+  display:flex;align-items:center;
+  border-radius:var(--rnav);
+  background:var(--glass);
+  backdrop-filter:blur(26px) saturate(180%);
+  -webkit-backdrop-filter:blur(26px) saturate(180%);
+  border:1px solid var(--glassbd);
+  box-shadow:0 10px 34px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,.09);
+}
+.nbtn{
+  flex:1;height:64px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  background:transparent;border:none;color:var(--tx3);cursor:pointer;
+  transition:color var(--tr),transform var(--tr);
+  border-radius:var(--rnav);
+}
+.nbtn.on{color:var(--ac);}
+.nbtn{transition:color var(--tr),transform var(--tr);}
+.nbtn:active{transform:scale(.9);}
+.nbtn.on::before{
+  content:'';
+  position:absolute;
+  top:0;left:50%;
+  transform:translateX(-50%);
+  width:20px;height:2px;
+  background:var(--ac);
+  border-radius:0 0 3px 3px;
+}
+.nicon{font-size:21px;line-height:1;}
+.nlbl{font-size:10px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;}
+/* In PWA (standalone) the nav sits lower — extra bottom breathing room
+   beyond the home indicator, since there's no Safari toolbar below it */
+
+.mfilter{display:flex;align-items:center;gap:12px;padding:4px 18px 14px;flex-shrink:0;}
+.mfbtn{width:30px;height:30px;border-radius:50%;background:var(--sur2);border:1px solid var(--bdr);color:var(--tx2);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.mfbtn:active{background:var(--bdr2);}
+.mflbl{flex:1;text-align:center;font-size:14px;font-weight:600;color:var(--tx);}
+.mfall{padding:5px 12px;border-radius:14px;background:var(--ac2);border:1px solid var(--ac3);color:var(--ac);font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;}
+.mfall:active{background:var(--ac);color:#fff;}
+
+
+/* ═══ PWA-ONLY LAYOUT (installed to home screen) ═══
+   Bigger calendar boxes, calendar nudged down, Today's Events lower */
+
+.themebtn{width:44px;height:44px;border-radius:14px;background:var(--sur);border:1px solid var(--bdr);color:var(--tx2);font-size:19px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform var(--tr),background var(--tr);}
+.themebtn:active{transform:scale(.92);background:var(--sur2);}
+.thgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:4px 0 8px;}
+.thopt{position:relative;display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:var(--r);border:1.5px solid var(--bdr);background:var(--sur);cursor:pointer;transition:transform var(--tr),border-color var(--tr);text-align:left;}
+.thopt:active{transform:scale(.97);}
+.thopt.on{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac2);}
+.thswatch{height:40px;border-radius:11px;display:flex;overflow:hidden;border:1px solid var(--bdr);}
+.thswatch i{flex:1;display:block;}
+.thname{font-size:13px;font-weight:700;color:var(--tx);font-family:var(--ff);}
+.thtick{position:absolute;top:9px;right:10px;font-size:13px;color:var(--ac);opacity:0;transition:opacity var(--tr);}
+.thopt.on .thtick{opacity:1;}
+
+
+/* ══ RESTORED + RETOKENISED: paid bills, tracker, chart, banner ══ */
+.paidchk{width:32px;height:32px;border-radius:50%;flex-shrink:0;border:2px solid var(--bdr2);background:transparent;color:transparent;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--tr);}
+.paidchk:active{transform:scale(.85);}
+.paidchk.on{background:var(--grn);border-color:var(--grn);color:var(--bg);}
+.lcard.paid{border-left:3px solid var(--grn);}
+
+/* Tracker */
+#tabTracker{overflow:hidden;}
+.trk-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 84px);}
+.trk-scroll::-webkit-scrollbar{display:none;}
+.trk-hero{position:relative;padding:14px 20px 18px;}
+.trk-statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0;}
+.tsg-cell{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rsm);padding:13px 6px;text-align:center;box-shadow:var(--shs);}
+.tsg-v{font-size:18px;font-weight:800;color:var(--tx);font-family:var(--ff);line-height:1;}
+.tsg-v.trk-paid{color:var(--grn);}
+.tsg-v.trk-unpaid{color:var(--yel);}
+.tsg-l{font-size:9px;color:var(--tx3);margin-top:5px;text-transform:uppercase;letter-spacing:.5px;}
+.trk-totrow{display:flex;gap:12px;margin:14px 0;}
+.tt-cell{flex:1;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:15px 16px;box-shadow:var(--shs);}
+.tt-cell.trk-right{text-align:right;}
+.trk-big{font-size:25px;font-weight:800;color:var(--tx);font-family:var(--ff);line-height:1;letter-spacing:-.5px;}
+.trk-big.trk-paid{color:var(--grn);}
+.trk-big.trk-unpaid{color:var(--yel);}
+.trk-lbl{font-size:10px;color:var(--tx3);margin-top:6px;text-transform:uppercase;letter-spacing:.5px;}
+.trk-right{text-align:right;}
+
+/* Bar chart */
+.trk-chart-head{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 14px;}
+.trk-chart-title{font-family:var(--ff);font-size:17px;font-weight:700;color:var(--tx);letter-spacing:-.3px;}
+.trk-legend{display:flex;gap:14px;}
+.lg{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--tx2);}
+.lg-dot{width:10px;height:10px;border-radius:3px;display:inline-block;}
+.lg-dot.paid{background:var(--grn);}
+.lg-dot.unpaid{background:var(--yel);}
+.trk-chart{display:flex;align-items:flex-end;gap:4px;height:158px;padding:0 2px 4px;overflow-x:auto;scrollbar-width:none;}
+.trk-chart::-webkit-scrollbar{display:none;}
+.bar-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;flex:1;min-width:17px;height:100%;cursor:pointer;}
+.bar-stack{width:100%;max-width:22px;display:flex;flex-direction:column;justify-content:flex-end;border-radius:6px 6px 0 0;overflow:hidden;background:var(--surf);flex:1;}
+.bar-seg{width:100%;transition:opacity var(--tr);}
+.bar-seg.paid{background:var(--grn);}
+.bar-seg.unpaid{background:var(--yel);}
+.bar-col:active .bar-seg{opacity:.7;}
+.bar-lbl{font-size:8px;color:var(--tx3);margin-top:5px;flex-shrink:0;}
+.bar-col.today .bar-lbl{color:var(--ac);font-weight:700;}
+
+/* Tracker sub-category chips */
+.trk-filters{display:flex;gap:9px;padding:12px 18px 14px;overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
+.trk-filters::-webkit-scrollbar{display:none;}
+.tchip{padding:8px 15px;border-radius:18px;border:1px solid var(--bdr);background:transparent;color:var(--tx2);font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;flex-shrink:0;transition:all var(--tr);}
+.tchip.on{background:var(--acg);border-color:transparent;color:var(--onac);font-weight:600;box-shadow:0 3px 12px var(--acs);}
+
+/* Subscription detail */
+.subdetail{display:flex;flex-direction:column;gap:2px;}
+.subrow{display:flex;justify-content:space-between;align-items:center;padding:14px 4px;border-bottom:1px solid var(--bdr);}
+.subrow:last-child{border-bottom:none;}
+.subk{font-size:13px;color:var(--tx3);}
+.subv{font-size:14px;font-weight:600;color:var(--tx);}
+
+/* Enable-notifications button */
+.notif-enable{margin:0 18px 10px;padding:12px 14px;border-radius:var(--rsm);background:var(--sur);border:1px solid var(--ac3);color:var(--ac);font-size:12px;font-weight:600;cursor:pointer;width:calc(100% - 36px);transition:all var(--tr);}
+.notif-enable:active{transform:scale(.98);}
+.notif-enable.granted{color:var(--grn);border-color:var(--grn);}
+
+/* In-app top banner */
+#nbanner{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;pointer-events:none;}
+#nbanner.on{background:rgba(0,0,0,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);pointer-events:auto;}
+.nban{width:100%;max-width:330px;background:var(--glass);backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);border:1px solid var(--glassbd);border-radius:var(--rlg);padding:22px 20px 18px;display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.55);pointer-events:auto;transform:scale(.9);opacity:0;animation:banIn .34s cubic-bezier(.2,.9,.3,1) forwards;}
+.nban.out{animation:banOut .35s ease forwards;}
+@keyframes banIn{to{transform:scale(1);opacity:1;}}
+@keyframes banOut{to{transform:scale(.94);opacity:0;}}
+
+
+
+
+
+
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+
+
+.nban-ic{width:52px;height:52px;border-radius:16px;background:var(--acg);display:flex;align-items:center;justify-content:center;font-size:25px;flex-shrink:0;box-shadow:0 4px 16px var(--acs);}
+.nban-body{width:100%;text-align:center;}
+.nban-ttl{font-family:var(--ff);font-size:17px;font-weight:800;color:var(--tx);letter-spacing:-.3px;}
+.nban-sub{font-size:12.5px;color:var(--tx3);margin-top:4px;line-height:1.45;}
+.nban-list{width:100%;display:flex;flex-direction:column;gap:7px;margin-top:2px;max-height:210px;overflow-y:auto;}
+.nban-list::-webkit-scrollbar{display:none;}
+.nban-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--rsm);background:var(--sur);border:1px solid var(--bdr);}
+.nban-item-t{flex:1;font-size:13px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;}
+.nban-item-w{font-size:10.5px;font-weight:700;color:var(--ac);flex-shrink:0;}
+.nban-acts{display:flex;gap:9px;width:100%;margin-top:4px;}
+.nban-btn{flex:1;padding:12px;border-radius:var(--rsm);border:1px solid var(--bdr);background:var(--sur);color:var(--tx);font-size:13px;font-weight:700;cursor:pointer;}
+.nban-btn.p{background:var(--acg);border-color:transparent;color:var(--onac);box-shadow:0 4px 14px var(--acs);}
+
+/* MODALS */
+.ovl{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px;animation:fi .18s ease;}
+.ovl.hi{display:none;}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.modal{width:100%;max-width:440px;background:var(--bg2);border:1px solid var(--bdr2);border-radius:20px;padding:18px 16px 18px;display:flex;flex-direction:column;gap:11px;max-height:88vh;animation:su .24s cubic-bezier(.34,1.4,.64,1);box-shadow:0 -8px 40px rgba(0,0,0,.5);}
+@keyframes su{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.mhandle{width:30px;height:3px;background:var(--bdr2);border-radius:3px;margin:0 auto -3px;}
+.mhdr{display:flex;align-items:center;gap:9px;}
+.micon{font-size:19px;}
+.mtitle{font-family:var(--ff);font-size:17px;font-weight:700;flex:1;color:var(--tx);}
+.mclose{width:28px;height:28px;border-radius:50%;border:1px solid var(--bdr);background:transparent;color:var(--tx2);font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.mclose:active{background:rgba(212,91,91,.2);color:var(--red);}
+.fscroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:9px;scrollbar-width:none;}
+.fscroll::-webkit-scrollbar{display:none}
+.fgrp{display:flex;flex-direction:column;gap:4px;}
+.flbl{font-size:9px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--tx3);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.fi{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rsm);color:var(--tx);font-size:16px;padding:11px 12px;width:100%;transition:border-color var(--tr),background var(--tr);outline:none;transition:border-color .15s;}
+.fi:focus{border-color:var(--ac);}
+.fi option{background:var(--bg2);}
+textarea.fi{resize:none;min-height:62px;}
+.macts{display:flex;gap:8px;flex-shrink:0;}
+.btnp{flex:1;padding:13px;border-radius:var(--rsm);background:var(--acg);border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:transform var(--tr),box-shadow var(--tr);box-shadow:0 4px 16px var(--acs);}
+.btnp:active{transform:scale(.97);}
+.btnp:active{opacity:.82;}
+.btns{padding:12px 16px;border-radius:var(--rsm);background:transparent;border:1px solid var(--bdr);color:var(--tx2);font-size:14px;cursor:pointer;}
+.btns:active{background:var(--sur2);}
+.rlist{display:flex;flex-direction:column;gap:7px;max-height:50vh;overflow-y:auto;}
+.ri{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:var(--rsm);background:var(--sur);border-left:3px solid var(--yel);}
+.rit{flex:1;font-size:14px;font-weight:600;color:var(--tx);}
+.rid{font-size:10px;color:var(--yel);font-weight:700;}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--tx3);font-size:12px;text-align:center;padding:30px;}
+.empty-ic{font-size:30px;opacity:.35;}
+</style>
+<script>
+/* Apply saved theme before first paint (playbook 8: avoids wrong-background flash).
+   Reads only our own namespaced key; never enumerates storage. */
+(function(){try{
+  var t=localStorage.getItem('planner-s.theme.v1');
+  if(t&&/^[a-z]{3,12}$/.test(t)&&t!=='ember')document.documentElement.setAttribute('data-theme',t);
+}catch(e){}})();
+</script>
+</head>
+<body>
+
+<!-- REMINDER MODAL -->
+<div id="rModal" class="ovl hi">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mhdr"><span class="micon">🔔</span><h3 class="mtitle">Upcoming Reminders</h3><button class="mclose" onclick="hm('rModal')">✕</button></div>
+    <div id="rList" class="rlist"></div>
+    <button class="btnp" onclick="hm('rModal')">Got it</button>
+  </div>
+</div>
+<!-- EVENT MODAL -->
+<div id="eModal" class="ovl hi">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mhdr"><span class="micon" id="mi">✦</span><h3 class="mtitle" id="mt">New Event</h3><button class="mclose" onclick="hm('eModal')">✕</button></div>
+    <div class="fscroll">
+      <input type="hidden" id="eid"/ autocomplete="off">
+      <div class="fgrp"><div class="flbl">Title *</div><input type="text" id="et" autocomplete="off" autocorrect="off" spellcheck="false" class="fi" placeholder="What's happening?"/></div>
+      <div class="frow">
+        <div class="fgrp"><div class="flbl">Date *</div><input type="date" id="ed" class="fi"/ autocomplete="off"></div>
+        <div class="fgrp"><div class="flbl">Time</div><input type="time" id="etm" class="fi"/ autocomplete="off"></div>
+      </div>
+      <div class="fgrp"><div class="flbl">Category</div>
+        <select id="ec" class="fi" onchange="toggleSubcat()" autocomplete="off">
+          <option value="event">📅 Event</option><option value="bill">💸 Bill</option>
+          <option value="meeting">🤝 Meeting</option>
+          <option value="birthday">🎂 Birthday</option><option value="task">✅ Task</option>
+          <option value="holiday">🏖️ Holiday</option>
+        </select>
+      </div>
+      <div class="fgrp" id="subcatGrp" style="display:none"><div class="flbl" style="color:var(--ac)">Bill Type (Tracker category)</div>
+        <select id="esc" class="fi" autocomplete="off">
+          <option value="subscription">🔁 Subscription</option>
+          <option value="utility">💡 Utility</option>
+          <option value="business">💼 Business</option>
+          <option value="personal">🧍 Personal</option>
+          <option value="others">📦 Others</option>
+        </select>
+      </div>
+      <div class="fgrp"><div class="flbl">Location</div><input type="text" id="el" autocomplete="off" autocorrect="off" spellcheck="false" class="fi" placeholder="Optional…"/></div>
+      <div class="frow">
+        <div class="fgrp"><div class="flbl">Reminder</div>
+          <select id="er" class="fi" autocomplete="off">
+            <option value="0">None</option><option value="1">1 day before</option>
+            <option value="2">2 days before</option><option value="3">3 days before</option>
+            <option value="5">5 days before</option><option value="7">7 days before</option>
+          </select>
+        </div>
+        <div class="fgrp"><div class="flbl">Repeat</div>
+          <select id="erp" class="fi" autocomplete="off">
+            <option value="none">None</option><option value="daily">Daily</option>
+            <option value="weekly">Weekly</option><option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option><option value="yearly">Yearly</option>
+          </select>
+        </div>
+      </div>
+      <div class="fgrp"><div class="flbl">Amount (Bills)</div><input type="number" id="ea" autocomplete="off" autocorrect="off" spellcheck="false" class="fi" placeholder="₹ 0"/></div>
+      <div class="fgrp"><div class="flbl">Notes</div><textarea id="en" autocomplete="off" autocorrect="off" spellcheck="false" class="fi" rows="3" placeholder="Additional notes…"></textarea></div>
+    </div>
+    <div class="macts"><button class="btns" onclick="hm('eModal')">Cancel</button><button class="btnp" onclick="saveEv()">Save Event</button></div>
+  </div>
+</div>
+<!-- SUBSCRIPTION DETAIL MODAL -->
+<div id="subModal" class="ovl hi">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mhdr"><span class="micon" id="subIcon">🔁</span><h3 class="mtitle" id="subName">Subscription</h3><button class="mclose" onclick="hm('subModal')">✕</button></div>
+    <div class="subdetail">
+      <div class="subrow"><span class="subk">Amount</span><span class="subv" id="subAmt">₹0</span></div>
+      <div class="subrow"><span class="subk">Billing</span><span class="subv" id="subBilling">Monthly</span></div>
+      <div class="subrow"><span class="subk">Next payment</span><span class="subv" id="subNext">—</span></div>
+      <div class="subrow"><span class="subk">Type</span><span class="subv" id="subType">—</span></div>
+      <div class="subrow"><span class="subk">Status</span><span class="subv" id="subStatus">—</span></div>
+    </div>
+    <div class="macts"><button class="btns" onclick="hm('subModal')">Close</button><button class="btnp" id="subEditBtn">Edit</button></div>
+  </div>
+</div>
+
+<div id="nbanner"></div>
+
+<div id="thModal" class="ovl hi">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mhdr"><span class="micon">◐</span><h3 class="mtitle">Theme</h3><button class="mclose" onclick="hm('thModal')">✕</button></div>
+    <div class="thgrid" id="thGrid"></div>
+  </div>
+</div>
+<!-- APP -->
+<div id="app">
+  <div class="hdr">
+    <div class="hdr-r1">
+      <div class="clkpill"><div class="dot"></div><span class="clkt" id="clk">00:00</span><span class="clksep"> · </span><span class="clkd" id="cdt">--</span></div>
+      <button class="themebtn" onclick="openThemes()" aria-label="Change theme">◐</button><button class="addbtn" onclick="openEv()">+</button>
+    </div>
+    <div class="hdr-r2"><div class="apptitle">Planner S</div><div class="appsub" id="asub">loading…</div><div style="font-size:8px;color:var(--tx3);margin-left:4px" id="verTag">v35</div></div>
+  </div>
+
+  <div class="tkr"><div class="tkrlbl">TODAY</div><div class="tkrtrack"><div class="tkrtxt" id="tkrtxt">Loading…</div></div></div>
+
+  <div class="flt" id="fltRow">
+    <button class="chip on" data-f="all"><span>All</span><span class="cc" id="cc-all">0</span></button>
+    <button class="chip" data-f="event"><span>Events</span><span class="cc" id="cc-event">0</span></button>
+    <button class="chip" data-f="bill"><span>Bills</span><span class="cc" id="cc-bill">0</span></button>
+    
+    <button class="chip" data-f="meeting"><span>Meetings</span><span class="cc" id="cc-meeting">0</span></button>
+    <button class="chip" data-f="birthday"><span>Bdays</span><span class="cc" id="cc-birthday">0</span></button>
+    <button class="chip" data-f="task"><span>Tasks</span><span class="cc" id="cc-task">0</span></button>
+    <button class="chip" data-f="holiday"><span>Holidays</span><span class="cc" id="cc-holiday">0</span></button>
+  </div>
+
+  <main id="mainArea">
+    <div id="tabCalendar" class="tab on">
+      <div class="calwrap">
+        <div class="calcard" id="calCard">
+          <div class="calhdr"><span class="calmonth" id="calLbl">May 2026</span><div class="calnav"><button class="arr" id="prev">‹</button><button class="tbtn" id="todayBtn">Today</button><button class="arr" id="next">›</button></div></div>
+          <div class="wdays"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+          <div class="calgrid" id="cg"></div>
+        </div>
+        <div class="dayprev">
+          <div class="dphdr"><span class="dptitle" id="dpTitle">Today's Events</span><button class="dpadd" onclick="openEv()">+ Add</button></div>
+          <div class="dplist" id="dpList"></div>
+        </div>
+      </div>
+    </div>
+    <div id="tabAgenda" class="tab"><div class="tabttl">Agenda</div><div class="slist" id="agList"></div></div>
+    <div id="tabTracker" class="tab">
+      <div class="trk-scroll">
+        <div class="trk-hero">
+          <div class="trk-chart-head">
+            <span class="trk-chart-title" id="trkChartMonth">This Month</span>
+            <div class="trk-legend">
+              <span class="lg"><i class="lg-dot paid"></i>Paid</span>
+              <span class="lg"><i class="lg-dot unpaid"></i>Unpaid</span>
+            </div>
+          </div>
+          <div class="trk-chart" id="trkChart"><!-- bars injected by JS --></div>
+          <div class="trk-totrow">
+            <div class="tt-cell"><div class="trk-big trk-paid" id="trkPaidAmt">₹0</div><div class="trk-lbl">This month · Paid</div></div>
+            <div class="tt-cell trk-right"><div class="trk-big trk-unpaid" id="trkUnpaidAmt">₹0</div><div class="trk-lbl">This month · Unpaid</div></div>
+          </div>
+          <div class="trk-statgrid">
+            <div class="tsg-cell"><div class="tsg-v trk-paid" id="trkPaidN">0</div><div class="tsg-l">Paid bills</div></div>
+            <div class="tsg-cell"><div class="tsg-v trk-unpaid" id="trkUnpaidN">0</div><div class="tsg-l">Unpaid bills</div></div>
+            <div class="tsg-cell"><div class="tsg-v" id="trkNextAmt">₹0</div><div class="tsg-l">Next month</div></div>
+            <div class="tsg-cell"><div class="tsg-v" id="trkCount">0</div><div class="tsg-l">Total bills</div></div>
+          </div>
+        </div>
+        <div class="trk-filters" id="trkFilters">
+          <button class="tchip on" data-sc="all">All</button>
+          <button class="tchip" data-sc="subscription">🔁 Subscription</button>
+          <button class="tchip" data-sc="utility">💡 Utility</button>
+          <button class="tchip" data-sc="business">💼 Business</button>
+          <button class="tchip" data-sc="personal">🧍 Personal</button>
+          <button class="tchip" data-sc="others">📦 Others</button>
+        </div>
+        <div class="clist" id="trkList"></div>
+      </div>
+    </div>
+    <div id="tabReminders" class="tab"><div class="tabttl">Reminders</div><button id="notifBtn" class="notif-enable" onclick="requestNotifs()">🔔 Enable device notifications</button>
+      <div class="mfilter"><button class="mfbtn" onclick="shiftTabMonth(-1)">‹</button><span class="mflbl" id="mfRem">All</span><button class="mfbtn" onclick="shiftTabMonth(1)">›</button><button class="mfall" onclick="resetTabMonth()">All</button></div>
+      <div class="clist" id="remList"></div></div>
+    <div id="tabBills" class="tab">
+      <div class="tabttl">Bills</div>
+      <div class="bsum"><div><div class="bsuml">This Month</div><div class="bsumv" id="bMonth">₹0</div></div><div><div class="bsuml">Upcoming</div><div class="bsumv" id="bUp">₹0</div></div><button class="csvbtn" onclick="exportCSV()">⬇ CSV</button></div>
+      <div class="mfilter"><button class="mfbtn" onclick="shiftTabMonth(-1)">‹</button><span class="mflbl" id="mfBill">All</span><button class="mfbtn" onclick="shiftTabMonth(1)">›</button><button class="mfall" onclick="resetTabMonth()">All</button></div>
+      <div class="clist" id="bList"></div>
+    </div>
+  </main>
+
+  <nav class="bnav">
+    <button class="nbtn on" data-tab="Calendar"><span class="nicon">⊞</span><span class="nlbl">Main</span></button>
+    <button class="nbtn" data-tab="Agenda"><span class="nicon">☰</span><span class="nlbl">Agenda</span></button>
+    <button class="nbtn" data-tab="Reminders"><span class="nicon">🔔</span><span class="nlbl">Reminders</span></button>
+    <button class="nbtn" data-tab="Bills"><span class="nicon">💸</span><span class="nlbl">Bills</span></button>
+    <button class="nbtn" data-tab="Tracker"><span class="nicon">📊</span><span class="nlbl">Tracker</span></button>
+  </nav>
+
+</div>
+<script>
+// ── Resilient DOM helpers ───────────────────────────────────────────
+// A stale cached build can leave the DOM and this script out of step.
+// Every accessor below no-ops on a missing element instead of throwing,
+// so a version mismatch degrades gracefully rather than white-screening.
+const $=id=>document.getElementById(id);
+const setTxt=(id,v)=>{const e=$(id); if(e)e.textContent=v; return !!e;};
+const setHTM=(id,v)=>{const e=$(id); if(e)e.innerHTML=v; return !!e;};
+const val=id=>{const e=$(id); return e?e.value:'';};
+const setVal=(id,v)=>{const e=$(id); if(e)e.value=v;};
+const bind=(id,ev,fn)=>{const e=$(id); if(e)e.addEventListener(ev,fn);};
+
+// ── Clickjacking guard (meta CSP frame-ancestors is ignored by browsers) ──
+// Only CROSS-ORIGIN framing is a clickjacking risk: a hostile site overlaying
+// invisible UI on top of yours. Same-origin embedding is your own page and is
+// allowed. Reading top.location.origin throws when cross-origin, which is the
+// detection: no throw + same origin = safe, otherwise block with a VISIBLE
+// notice (an invisible overlay would defeat the purpose).
+(function(){
+  if (window.top === window.self) return;              // not framed at all
+  var hostile = true;
+  try {
+    if (window.top.location.origin === window.location.origin) hostile = false;
+  } catch (e) { hostile = true; }                       // cross-origin -> blocked
+  if (!hostile) return;
+
+  try { document.documentElement.innerHTML = ''; } catch(e){}
+  var d = document.createElement('div');
+  d.setAttribute('style',
+    'position:fixed;inset:0;z-index:2147483647;background:#0e0a06;color:#f6efe8;'+
+    'display:flex;flex-direction:column;align-items:center;justify-content:center;'+
+    'gap:12px;padding:26px;text-align:center;'+
+    'font:16px/1.55 ui-rounded,-apple-system,system-ui,sans-serif');
+  var h = document.createElement('div');
+  h.textContent = 'Open Planner S in its own tab';
+  h.setAttribute('style','font-size:20px;font-weight:800;letter-spacing:-.3px');
+  var p = document.createElement('div');
+  p.textContent = 'Planner S blocks being embedded in another page, so your data '+
+                  'can never be read through a frame. This happens in preview panes '+
+                  'and embeds \u2014 open it directly and it will work normally.';
+  p.setAttribute('style','opacity:.72;font-size:13.5px;max-width:38ch');
+  var row = document.createElement('div');
+  row.setAttribute('style','display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px');
+  function mkLink(target, label, primary){
+    var a = document.createElement('a');
+    a.href = window.location.href;
+    a.target = target;
+    if (target === '_blank') a.rel = 'noopener noreferrer';
+    a.textContent = label;
+    a.setAttribute('style','padding:12px 20px;border-radius:12px;text-decoration:none;'+
+      'font-weight:700;font-size:14px;'+ (primary
+        ? 'background:linear-gradient(135deg,#f0703f,#e04d2a);color:#fff;box-shadow:0 4px 16px rgba(240,112,63,.4)'
+        : 'background:rgba(255,255,255,.07);color:#f6efe8;border:1px solid rgba(255,255,255,.15)'));
+    return a;
+  }
+  row.appendChild(mkLink('_blank','Open in new tab', true));
+  row.appendChild(mkLink('_top','Open here', false));
+  d.appendChild(h); d.appendChild(p); d.appendChild(row);
+  (document.body || document.documentElement).appendChild(d);
+  try { window.stop && window.stop(); } catch(e){}
+})();
+
+// Unregister all old service workers first
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js', { scope: './' }).then(reg=>{
+    // Check for updates immediately and on each load
+    reg.update();
+    reg.addEventListener('updatefound',()=>{
+      const nw=reg.installing;
+      if(nw){
+        nw.addEventListener('statechange',()=>{
+          // New SW activated and there's an old controller → reload for fresh code
+          if(nw.state==='activated' && navigator.serviceWorker.controller){
+            location.reload();
+          }
+        });
+      }
+    });
+  }).catch(()=>{});
+  // Reload once when a new SW takes control
+  let _reloaded=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(!_reloaded){ _reloaded=true; location.reload(); }
+  });
+}
+
+
+// ══ NAMESPACED STORAGE ══════════════════════════════════════════════
+// This origin is shared with every other project on the same github.io
+// account. The accessor REFUSES any key outside our namespace, so a typo
+// or future refactor cannot read or write a neighbour's data. We never
+// enumerate (no .length/.key()/Object.keys) and never call .clear().
+const NS = 'planner-s.';
+const ymdLocal = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const Store = (()=>{
+  const owned = k => typeof k === 'string' && k.startsWith(NS);
+  return {
+    get(k){ if(!owned(k)) return null; try{ return localStorage.getItem(k); }catch(e){ return null; } },
+    set(k,v){
+      if(!owned(k)) return {ok:false,reason:'namespace'};
+      try{ localStorage.setItem(k,v); return {ok:true}; }
+      catch(e){
+        const quota = e && (e.name==='QuotaExceededError' || e.code===22 || e.code===1014);
+        return {ok:false, reason: quota ? 'quota' : 'error', error:e};
+      }
+    },
+    del(k){ if(!owned(k)) return false; try{ localStorage.removeItem(k); return true; }catch(e){ return false; } }
+  };
+})();
+
+// ══ HOSTILE-INPUT VALIDATION ════════════════════════════════════════
+// Anything read back from storage is treated as untrusted: another page on
+// this shared origin could have written it. Same validator as any import.
+const MAXLEN = { title:200, notes:2000, loc:200, amt:20 };
+const CATS    = ['event','bill','meeting','birthday','task','holiday','note'];
+const SUBCATS = ['subscription','utility','business','personal','others'];
+const REPS    = ['none','daily','weekly','monthly','quarterly','yearly'];
+
+// Strip control chars + bidi overrides (can visually reverse/disguise text)
+const clean = (s, max) => {
+  if (s === null || s === undefined) return '';
+  let t = String(s)
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g,'')
+    .replace(/[\u202A-\u202E\u2066-\u2069\u200E\u200F]/g,'')
+    .replace(/<[^>]*>/g,'')
+    .trim();
+  if (max && t.length > max) t = t.slice(0, max);
+  return t;
+};
+// A real calendar date, not just a pattern match (rejects 2026-02-31)
+const validDate = s => {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const [y,m,d] = s.split('-').map(Number);
+  if (m < 1 || m > 12 || d < 1 || y < 1970 || y > 2999) return false;
+  const dt = new Date(y, m-1, d, 12);           // midday: DST-safe
+  return dt.getFullYear()===y && dt.getMonth()===m-1 && dt.getDate()===d;
+};
+const oneOf = (v, list, dflt) => list.indexOf(v) >= 0 ? v : dflt;
+const DANGEROUS_KEYS = ['__proto__','constructor','prototype'];
+const safeId = v => (typeof v === 'string'
+  && /^[A-Za-z0-9_-]{1,64}$/.test(v)
+  && DANGEROUS_KEYS.indexOf(v) < 0) ? v : null;
+
+// Returns a sanitised record, or null if it cannot be trusted at all.
+function validateRecord(r){
+  if (!r || typeof r !== 'object' || Array.isArray(r)) return null;
+  const id = safeId(r.id); if (!id) return null;
+  if (!validDate(r.date)) return null;
+  const out = {
+    id,
+    date:   r.date,
+    title:  clean(r.title, MAXLEN.title) || 'Untitled',
+    cat:    oneOf(r.cat, CATS, 'event'),
+    rep:    oneOf(r.rep, REPS, 'none'),
+    notes:  clean(r.notes, MAXLEN.notes),
+    loc:    clean(r.loc, MAXLEN.loc),
+    time:   (typeof r.time==='string' && /^\d{2}:\d{2}$/.test(r.time)) ? r.time : '',
+    rem:    String(Math.max(0, Math.min(365, parseInt(r.rem,10) || 0))),
+    amt:    String(clean(r.amt, MAXLEN.amt)).replace(/[^0-9.]/g,'').slice(0,20),
+    paid:   r.paid === true,
+    ca:     typeof r.ca === 'string' ? r.ca.slice(0,40) : ''
+  };
+  if (out.cat === 'bill') out.subcat = oneOf(r.subcat, SUBCATS, 'others');
+  const pid = safeId(r.pid); if (pid) { out.pid = pid; out.rc = true; }
+  if (r.paidOn && validDate(r.paidOn)) out.paidOn = r.paidOn;
+  return out;
+}
+let lastRejected = 0;   // surfaced rather than silently dropped
+
+
+// ══ ONE-TIME MIGRATION from legacy un-namespaced keys ══
+(function migrateLegacy(){
+  try{
+    if (Store.get(NS+'migrated.v1')) return;
+    const legacy = localStorage.getItem('ps_v6');
+    if (legacy && !Store.get(NS+'events.v1')) Store.set(NS+'events.v1', legacy);
+    // Remove legacy keys by name (never .clear(), never enumerate)
+    ['ps_v5','ps_v6','ps_cleared_demo'].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
+    Store.set(NS+'migrated.v1','1');
+  }catch(e){}
+})();
+
+const DB=(()=>{
+  const K=NS+'events.v1';
+  const rd=()=>{
+    let raw; try{ raw = JSON.parse(Store.get(K)); }catch(e){ raw = null; }
+    if(!Array.isArray(raw)) return [];
+    if(raw.length > 5000) raw = raw.slice(0,5000);      // cap pathological input
+    const out=[]; let bad=0;
+    for(const r of raw){ const v=validateRecord(r); if(v) out.push(v); else bad++; }
+    lastRejected = bad;
+    return out;
+  };
+  const wr=a=>{
+    const res = Store.set(K, JSON.stringify(a));
+    if(!res.ok){
+      const msg = res.reason==='quota'
+        ? 'Storage is full. Export your data, then delete old entries.'
+        : 'Could not save. Your last change may not be stored.';
+      try{ showBanner('⚠️','Save failed',msg); }catch(e){ alert('Planner S: '+msg); }
+    }
+    return res.ok;
+  };
+  const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
+  // Local YYYY-MM-DD (avoids UTC shift that toISOString causes in +offset timezones)
+  const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  function step(d,r){
+    const n=new Date(d);
+    if(r==='daily')n.setDate(n.getDate()+1);
+    else if(r==='weekly')n.setDate(n.getDate()+7);
+    else if(r==='monthly')n.setMonth(n.getMonth()+1);
+    else if(r==='quarterly')n.setMonth(n.getMonth()+3);
+    else if(r==='yearly')n.setFullYear(n.getFullYear()+1);
+    return n;
+  }
+  function add(ev){
+    const all=rd();ev.id=uid();ev.ca=new Date().toISOString();all.push(ev);
+    if(ev.rep&&ev.rep!=='none'){
+      const base=new Date(ev.date+'T12:00:00');
+      const baseDay=base.getDate();
+      // How many occurrences and what stepping for each repeat type
+      const addOcc=(dt)=>all.push({...ev,id:uid(),date:ymd(dt),pid:ev.id,rc:true});
+      if(ev.rep==='daily'){
+        for(let i=1;i<=90;i++){const d=new Date(base);d.setDate(base.getDate()+i);addOcc(d);}
+      } else if(ev.rep==='weekly'){
+        for(let i=1;i<=52;i++){const d=new Date(base);d.setDate(base.getDate()+i*7);addOcc(d);}
+      } else if(ev.rep==='monthly'){
+        // SAME DAY each month, clamped to month length, 12 months
+        for(let i=1;i<=12;i++){
+          const y=base.getFullYear(), m=base.getMonth()+i;
+          const targetY=y+Math.floor(m/12), targetM=m%12;
+          const lastDay=new Date(targetY,targetM+1,0).getDate();
+          const day=Math.min(baseDay,lastDay);
+          addOcc(new Date(targetY,targetM,day,12));
+        }
+      } else if(ev.rep==='quarterly'){
+        for(let i=1;i<=4;i++){
+          const y=base.getFullYear(), m=base.getMonth()+i*3;
+          const targetY=y+Math.floor(m/12), targetM=m%12;
+          const lastDay=new Date(targetY,targetM+1,0).getDate();
+          const day=Math.min(baseDay,lastDay);
+          addOcc(new Date(targetY,targetM,day,12));
+        }
+      } else if(ev.rep==='yearly'){
+        for(let i=1;i<=3;i++){const d=new Date(base);d.setFullYear(base.getFullYear()+i);addOcc(d);}
+      }
+    }
+    wr(all);return ev;
+  }
+  const upd=(id,ch)=>wr(rd().map(e=>e.id===id?{...e,...ch}:e));
+  const del=id=>wr(rd().filter(e=>e.id!==id));
+  const byId=id=>rd().find(e=>e.id===id);
+  const forDate=d=>rd().filter(e=>e.date===d);
+  const forMonth=(y,m)=>{const p=`${y}-${String(m).padStart(2,'0')}`;return rd().filter(e=>e.date?.startsWith(p));};
+  const withRem=()=>{const t=new Date();t.setHours(0,0,0,0);return rd().filter(e=>{if(!e.rem||e.rem==='0')return false;const d=Math.ceil((new Date(e.date+'T12:00:00')-t)/864e5);return d>=0&&d<=+e.rem;});};
+  const byCat=c=>c&&c!=='all'?rd().filter(e=>e.cat===c):rd();
+  const counts=()=>{const a=rd(),r={all:a.length};['event','bill','meeting','birthday','task','holiday'].forEach(c=>r[c]=a.filter(e=>e.cat===c).length);return r;};
+  // Series-aware operations for recurring events
+  const delSeries=ev=>{
+    const pid=ev.pid||ev.id;
+    wr(rd().filter(e=>e.id!==pid && e.pid!==pid && e.id!==ev.id));
+  };
+  const updSeries=(ev,ch)=>{
+    const pid=ev.pid||ev.id;
+    wr(rd().map(e=>(e.id===pid||e.pid===pid)?{...e,...ch,date:e.date}:e));
+  };
+  return{add,upd,del,byId,forDate,forMonth,withRem,byCat,counts,rd,delSeries,updSeries,wrAll:wr};
+})();
+// ── Security helpers ─────────────────────────────────────────
+// Escapes HTML special chars to prevent XSS in innerHTML
+const esc = s => {
+  if (s === null || s === undefined) return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+};
+// Strips HTML tags and trims — used before storing user input
+const strip = (s,max) => clean(s, max || 200);   // caps length, strips control+bidi chars
+// Safe number — returns 0 for NaN/empty
+const safeNum = n => { const v = parseFloat(n); return isNaN(v) ? 0 : v; };
+
+
+const CC={event:'#5b8fd4',bill:'#e8633a',note:'#43c59e',meeting:'#d4aa5b',birthday:'#d48b5b',task:'#5bba8f',holiday:'#9b7fd4'};
+const CE={event:'📅',bill:'💸',note:'📝',meeting:'🤝',birthday:'🎂',task:'✅',holiday:'🏖️'};
+const has=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+const RX_HEX=/^#[0-9A-Fa-f]{6}$/;
+// Only ever emits a validated 6-digit hex — nothing user-controlled reaches style=
+const cc=c=>{const v=(typeof c==='string'&&has(CC,c))?CC[c]:'#e8633a';return RX_HEX.test(v)?v:'#e8633a';};
+const ce=c=>(typeof c==='string'&&has(CE,c))?CE[c]:'📅';
+const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const today=()=>new Date().toISOString().slice(0,10);
+const fDate=s=>s?new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'';
+let curTab='Calendar',curFlt='all',calY,calM,selDate;
+const sm=id=>{const e=$(id); if(e)e.classList.remove('hi');};
+const hm=id=>{const e=$(id); if(e)e.classList.add('hi');};
+
+function tickClk(){
+  const n=new Date();
+  setTxt('clk', n.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false}));
+  setTxt('cdt', n.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'}));
+}
+setInterval(tickClk,1000);tickClk();
+
+function renderTicker(){
+  const td=today(),tm=new Date();tm.setDate(tm.getDate()+1);const tmS=tm.toISOString().slice(0,10);
+  const te=DB.forDate(td),tme=DB.forDate(tmS);
+  let p=te.map(e=>`${ce(e.cat)} ${e.time?e.time+' ':''}${e.title}`);
+  if(tme.length){p.push('│ Tomorrow');tme.forEach(e=>p.push(`${ce(e.cat)} ${e.title}`));}
+  if(!p.length)p=['Nothing today — clear skies ✨'];
+  setTxt('tkrtxt', p.join('   ·   '));
+  setTimeout(renderTicker,60000);
+}
+
+function updateMeta(){
+  const all=DB.rd(),td=today();
+  const mo=all.filter(e=>e.date?.slice(0,7)===td.slice(0,7)).length;
+  const rc=DB.withRem().length;
+  setTxt('asub', `${mo} this month · ${rc} reminder${rc!==1?'s':''}`);
+  const c=DB.counts();Object.keys(c).forEach(k=>{const el=document.getElementById('cc-'+k);if(el)el.textContent=c[k];});
+}
+
+// Calendar layout constants (match CSS exactly)
+const CALHDR_H=40,WDAYS_H=20,GRID_PAD=6,DNW_H=24,PILL_H=13;
+
+function renderCal(){
+  setTxt('calLbl', `${MN[calM-1]} ${calY}`);
+  const grid=$('cg'); if(!grid)return; grid.innerHTML='';
+  const td=today();
+  const evMap=Object.create(null);   // null-prototype: '__proto__' cannot pollute
+  DB.forMonth(calY,calM).forEach(e=>{
+    if(curFlt!=='all'&&e.cat!==curFlt)return;
+    if(!validDate(e.date))return;                        // re-validate at point of use
+    (evMap[e.date]=evMap[e.date]||[]).push(e);
+  });
+  const first=new Date(calY,calM-1,1).getDay();
+  const dim=new Date(calY,calM,0).getDate();
+  const diPrev=new Date(calY,calM-1,0).getDate();
+  const rows=Math.ceil((first+dim)/7);
+
+  // CSS grid-auto-rows:1fr handles row heights automatically.
+  // We only need to compute how many event pills fit per cell.
+  // Estimate available cell height from the grid's rendered height.
+  const gridEl=grid.getBoundingClientRect();
+  const cellH=gridEl.height>0 ? Math.floor((gridEl.height-(rows-1)*4)/rows) : 80;
+  const DNW=26, PILL=14;
+  const maxPills=Math.max(0,Math.floor((cellH-DNW)/PILL));
+
+  for(let i=0,total=rows*7;i<total;i++){
+    let day,mo=calM,yr=calY,oth=false;
+    if(i<first){day=diPrev-first+i+1;mo=calM-1;oth=true;if(mo<1){mo=12;yr--;}}
+    else if(i>=first+dim){day=i-first-dim+1;mo=calM+1;oth=true;if(mo>12){mo=1;yr++;}}
+    else day=i-first+1;
+    const ds=`${yr}-${String(mo).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const evs=evMap[ds]||[];
+    const cell=document.createElement('div');
+    cell.className='cday'+(oth?' oth':'')+(ds===td?' tod':'')+(ds===selDate?' sel':'');
+    const nw=document.createElement('div');nw.className='dnw';
+    const dn=document.createElement('div');dn.className='dnum';dn.textContent=day;
+    nw.appendChild(dn);cell.appendChild(nw);
+    if(evs.length){
+      const box=document.createElement('div');box.className='dpills';
+      // Always show up to 2 short text labels (no dots)
+      const show=Math.min(evs.length,2);
+      evs.slice(0,show).forEach(ev=>{
+        const p=document.createElement('div');p.className='dpill';
+        const col = ev.paid ? '#5cc79a' : cc(ev.cat);
+        if(!RX_HEX.test(col)) return;   // never emit an unvalidated colour
+        p.style.cssText=`background:${col}33;color:${col};`;
+        const word=(ev.title||'').trim().split(/\s+/)[0]||'';
+        p.textContent=(ev.paid?'✓':'')+word.slice(0,ev.paid?3:4);
+        box.appendChild(p);
+      });
+      if(evs.length>show){
+        const m=document.createElement('div');m.className='dpmore';
+        m.textContent=`+${evs.length-show}`;
+        box.appendChild(m);
+      }
+      cell.appendChild(box);
+    }
+    cell.addEventListener('click',()=>{document.querySelectorAll('.cday.sel').forEach(c=>c.classList.remove('sel'));cell.classList.add('sel');selDate=ds;renderDP(ds);});
+    grid.appendChild(cell);
+  }
+}
+
+function renderDP(ds){
+  const td=today();
+  setTxt('dpTitle', ds===td?"Today's Events":new Date(ds+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}));
+  let evs=DB.forDate(ds);if(curFlt!=='all')evs=evs.filter(e=>e.cat===curFlt);
+  evs.sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));
+  const list=$('dpList'); if(!list)return;list.innerHTML='';
+  if(!evs.length){list.innerHTML='<div class="dpempty">No events — tap + to add</div>';return;}
+  evs.forEach(ev=>{const el=document.createElement('div');el.className='dpitem';el.style.borderLeftColor=cc(ev.cat);el.innerHTML=`<span class="dptime">${esc(ev.time)||'·'}</span><span class="dpname">${ce(ev.cat)} ${esc(ev.title)}</span><div class="dpacts"><button class="ibtn" onclick="editEv('${ev.id}');event.stopPropagation()">✎</button><button class="ibtn d" onclick="delEv('${ev.id}');event.stopPropagation()">✕</button></div>`;list.appendChild(el);});
+}
+
+function renderAgenda(){
+  const el=$('agList'); if(!el)return;
+  let evs=DB.byCat(curFlt).sort((a,b)=>a.date.localeCompare(b.date)||(a.time||'').localeCompare(b.time||''));
+  const td=today(),tm=new Date();tm.setDate(tm.getDate()+1);const tmS=tm.toISOString().slice(0,10);
+  const grps={};evs.forEach(e=>(grps[e.date]=grps[e.date]||[]).push(e));
+  el.innerHTML='';
+  if(!Object.keys(grps).length){el.innerHTML='<div class="empty"><div class="empty-ic">☰</div>No events yet</div>';return;}
+  Object.keys(grps).sort().forEach(ds=>{
+    const g=document.createElement('div');g.className='aggrp';
+    let lbl=new Date(ds+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+    if(ds===td)lbl='📌 Today';else if(ds===tmS)lbl='⏩ Tomorrow';
+    g.innerHTML=`<div class="aglbl">${esc(lbl)}</div>`;
+    grps[ds].forEach(ev=>{const it=document.createElement('div');it.className='agitem';it.innerHTML=`<div class="agbar" style="background:${cc(ev.cat)}"></div><div class="aginfo"><div class="agttl">${ce(ev.cat)} ${esc(ev.title)}</div><div class="agmet">${ev.time?`<span>⏰ ${esc(ev.time)}</span>`:''}${ev.loc?`<span>📍 ${esc(ev.loc)}</span>`:''}${ev.rep&&ev.rep!=='none'?`<span>🔁 ${esc(ev.rep)}</span>`:''}${ev.amt?`<span>₹${esc(safeNum(ev.amt).toLocaleString('en-IN'))}</span>`:''}</div></div><div class="agacts"><button class="ibtn" onclick="editEv('${ev.id}')">✎</button><button class="ibtn d" onclick="delEv('${ev.id}')">✕</button></div>`;g.appendChild(it);});
+    el.appendChild(g);
+  });
+}
+
+
+
+function renderReminders(){
+  const el=$('remList'); if(!el)return;const now=new Date();now.setHours(0,0,0,0);
+  const evs=DB.rd().filter(e=>e.rem&&e.rem!=='0'&&matchTabMonth(e.date)).sort((a,b)=>a.date.localeCompare(b.date));
+  el.innerHTML='';
+  if(!evs.length){el.innerHTML='<div class="empty"><div class="empty-ic">🔔</div>No reminders set</div>';return;}
+  evs.forEach(ev=>{const diff=Math.ceil((new Date(ev.date+'T12:00:00')-now)/864e5);const dlbl=diff<0?`${Math.abs(diff)}d ago`:diff===0?'Today!':diff===1?'Tomorrow':`in ${diff}d`;const uc=(diff>=0&&diff<=(parseInt(ev.rem,10)||0))?'var(--yel)':'var(--tx3)';const c=document.createElement('div');c.className='lcard';c.innerHTML=`<div class="licon" style="background:${cc(ev.cat)}22">${ce(ev.cat)}</div><div class="linfo"><div class="lttl">${esc(ev.title)}</div><div class="lsub">${esc(fDate(ev.date))} · ${esc(ev.rem)}d reminder</div></div><div class="lright"><span class="lurge" style="color:${uc}">${esc(dlbl)}</span><div style="display:flex;gap:4px"><button class="ibtn" onclick="editEv('${ev.id}')">✎</button><button class="ibtn d" onclick="delEv('${ev.id}')">✕</button></div></div>`;el.appendChild(c);});
+}
+
+
+
+// ─── TRACKER ───
+let trkSubcat='all';
+function renderTracker(){
+  const now=new Date(); now.setHours(0,0,0,0);
+  const allBills=DB.byCat('bill');
+  const uniqueBills=allBills.filter(b=>!b.pid);
+  const tdMonth=today().slice(0,7);
+  const yr=new Date().getFullYear(), mo=new Date().getMonth(); // 0-based
+  const daysInMonth=new Date(yr,mo+1,0).getDate();
+  const todayDate=new Date().getDate();
+  const nx=new Date(); nx.setMonth(nx.getMonth()+1);
+  const nextMonth=`${nx.getFullYear()}-${String(nx.getMonth()+1).padStart(2,'0')}`;
+  const MNS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  // This-month bills
+  const monthBills=allBills.filter(b=>b.date?.slice(0,7)===tdMonth);
+  const paidAmt=monthBills.filter(b=>b.paid).reduce((s,b)=>s+safeNum(b.amt),0);
+  const unpaidAmt=monthBills.filter(b=>!b.paid).reduce((s,b)=>s+safeNum(b.amt),0);
+  const paidN=monthBills.filter(b=>b.paid).length;
+  const unpaidN=monthBills.filter(b=>!b.paid).length;
+  const nextAmt=allBills.filter(b=>b.date?.slice(0,7)===nextMonth).reduce((s,b)=>s+safeNum(b.amt),0);
+
+  // Headline stats
+  setTxt('trkChartMonth', MNS[mo]+' '+yr);
+  setTxt('trkPaidAmt', '₹'+paidAmt.toLocaleString('en-IN'));
+  setTxt('trkUnpaidAmt', '₹'+unpaidAmt.toLocaleString('en-IN'));
+  setTxt('trkPaidN', paidN);
+  setTxt('trkUnpaidN', unpaidN);
+  setTxt('trkNextAmt', '₹'+nextAmt.toLocaleString('en-IN'));
+  setTxt('trkCount', uniqueBills.length);
+
+  // ── Build per-day paid/unpaid totals for the current month ──
+  const perDay=[]; let maxTotal=0;
+  for(let d=1; d<=daysInMonth; d++){
+    const key=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayBills=monthBills.filter(b=>b.date===key);
+    const p=dayBills.filter(b=>b.paid).reduce((s,b)=>s+safeNum(b.amt),0);
+    const u=dayBills.filter(b=>!b.paid).reduce((s,b)=>s+safeNum(b.amt),0);
+    perDay.push({d,p,u,total:p+u});
+    if(p+u>maxTotal) maxTotal=p+u;
+  }
+
+  // ── Render stacked bars ──
+  const chart=$('trkChart'); if(!chart)return;chart.innerHTML='';
+  if(!chart){/* no chart in DOM */}
+  else if(maxTotal===0){
+    chart.innerHTML='<div class="empty" style="width:100%"><div class="empty-ic">📊</div>No bills this month</div>';
+  } else {
+    perDay.forEach(({d,p,u,total})=>{
+      const col=document.createElement('div');
+      col.className='bar-col'+(d===todayDate?' today':'');
+      const stack=document.createElement('div'); stack.className='bar-stack';
+      // heights as % of maxTotal
+      const paidH=total?Math.round((p/maxTotal)*100):0;
+      const unpaidH=total?Math.round((u/maxTotal)*100):0;
+      if(unpaidH>0){const su=document.createElement('div');su.className='bar-seg unpaid';su.style.height=unpaidH+'%';stack.appendChild(su);}
+      if(paidH>0){const sp=document.createElement('div');sp.className='bar-seg paid';sp.style.height=paidH+'%';stack.appendChild(sp);}
+      col.appendChild(stack);
+      const lbl=document.createElement('div'); lbl.className='bar-lbl'; lbl.textContent=d;
+      col.appendChild(lbl);
+      if(total>0) col.title=`${MNS[mo]} ${d}: ₹${total.toLocaleString('en-IN')} (paid ₹${p.toLocaleString('en-IN')}, unpaid ₹${u.toLocaleString('en-IN')})`;
+      chart.appendChild(col);
+    });
+  }
+
+  // ── List (unique bills, subcat filtered) ──
+  let bills=uniqueBills.slice();
+  if(trkSubcat!=='all') bills=bills.filter(b=>(b.subcat||'others')===trkSubcat);
+  bills.sort((a,b)=>a.date.localeCompare(b.date));
+  const el=$('trkList'); if(!el)return;el.innerHTML='';
+  if(!bills.length){el.innerHTML='<div class="empty"><div class="empty-ic">📊</div>No bills in this category</div>';return;}
+  const SCI={subscription:'🔁',utility:'💡',business:'💼',personal:'🧍',others:'📦'};
+  bills.forEach(ev=>{
+    const paid=!!ev.paid; const sc=ev.subcat||'others';
+    const c=document.createElement('div'); c.className='lcard'+(paid?' paid':'');
+    c.style.opacity=paid?'.62':'1'; c.style.cursor='pointer';
+    c.innerHTML=`
+      <button class="paidchk${paid?' on':''}" onclick="togglePaid('${ev.id}');event.stopPropagation()">${paid?'✓':''}</button>
+      <div class="licon" style="background:rgba(232,99,58,.14)">${has(SCI,sc)?SCI[sc]:'📦'}</div>
+      <div class="linfo">
+        <div class="lttl"${paid?' style="text-decoration:line-through;opacity:.75"':''}>${esc(ev.title)}</div>
+        <div class="lsub">${esc(fDate(ev.date))} · ${esc(sc)}${ev.rep&&ev.rep!=='none'?' · 🔁 '+esc(ev.rep):''}${paid?' · <span style="color:var(--grn);font-weight:700">PAID</span>':''}</div>
+      </div>
+      <div class="lright">${ev.amt?`<div class="bamt"${paid?' style="color:var(--grn)"':''}>₹${esc(safeNum(ev.amt).toLocaleString('en-IN'))}</div>`:''}</div>`;
+    c.addEventListener('click',()=>openSubDetail(ev.id));
+    el.appendChild(c);
+  });
+}
+
+function openSubDetail(id){
+  const ev=DB.byId(id); if(!ev) return;
+  const SCI={subscription:'🔁',utility:'💡',business:'💼',personal:'🧍',others:'📦'};
+  const sc=ev.subcat||'others';
+  const rep=ev.rep&&ev.rep!=='none'?ev.rep:'one-time';
+  const billing = rep==='monthly'?'Monthly':rep==='yearly'?'Yearly':rep==='quarterly'?'Quarterly':rep==='weekly'?'Weekly':rep==='daily'?'Daily':'One-time';
+  setTxt('subIcon', SCI[sc]||'📦');
+  setTxt('subName', ev.title||'Subscription');
+  setTxt('subAmt', '₹'+safeNum(ev.amt).toLocaleString('en-IN'));
+  setTxt('subBilling', billing);
+  setTxt('subNext', fDate(ev.date)||'—');
+  setTxt('subType', sc.charAt(0).toUpperCase()+sc.slice(1));
+  setHTM('subStatus', ev.paid?'<span style="color:var(--grn)">Paid ✓</span>':'<span style="color:var(--yel)">Unpaid</span>');
+  const editBtn=$('subEditBtn'); if(editBtn)
+  editBtn.onclick=()=>{ hm('subModal'); editEv(id); };
+  sm('subModal');
+}
+
+function togglePaid(id){
+  const ev=DB.byId(id); if(!ev) return;
+  DB.upd(id,{paid:!ev.paid, paidOn: !ev.paid ? today() : null});
+  refreshAll();
+}
+
+function renderBills(){
+  const el=$('bList'); if(!el)return;const now=new Date();now.setHours(0,0,0,0);
+  const allBills=DB.byCat('bill');const td=today();
+  // Totals always reflect ALL bills (not affected by the month filter)
+  const mo=allBills.filter(b=>b.date?.slice(0,7)===td.slice(0,7)).reduce((s,b)=>s+safeNum(b.amt),0);
+  const up=allBills.filter(b=>!b.paid && new Date(b.date+'T12:00:00')>=now).reduce((s,b)=>s+safeNum(b.amt),0);
+  // The displayed list respects the month filter
+  const bills=allBills.filter(b=>matchTabMonth(b.date)).sort((a,b)=>a.date.localeCompare(b.date));
+  setTxt('bMonth', '₹'+mo.toLocaleString('en-IN'));
+  setTxt('bUp', '₹'+up.toLocaleString('en-IN'));
+  el.innerHTML='';
+  if(!bills.length){el.innerHTML='<div class="empty"><div class="empty-ic">💸</div>No bills yet</div>';return;}
+  bills.forEach(ev=>{
+    const diff=Math.ceil((new Date(ev.date+'T12:00:00')-now)/864e5);
+    const past=diff<0;
+    const paid=!!ev.paid;
+    const c=document.createElement('div');
+    c.className='lcard'+(paid?' paid':'');
+    c.style.opacity=paid?'.62':(past?'.6':'1');
+    c.innerHTML=`
+      <button class="paidchk${paid?' on':''}" onclick="togglePaid('${ev.id}');event.stopPropagation()" title="${paid?'Mark unpaid':'Mark paid'}">${paid?'✓':''}</button>
+      <div class="linfo">
+        <div class="lttl"${paid?' style="text-decoration:line-through;opacity:.75"':''}>${esc(ev.title)}</div>
+        <div class="lsub">${esc(fDate(ev.date))}${ev.rep&&ev.rep!=='none'?' · 🔁 '+esc(ev.rep):''}${paid?' · <span style="color:var(--grn);font-weight:700">PAID</span>':(past?' · <span style="color:var(--red)">Overdue</span>':'')}</div>
+      </div>
+      <div class="lright">
+        ${ev.amt?`<div class="bamt"${paid?' style="color:var(--grn)"':''}>₹${esc(safeNum(ev.amt).toLocaleString('en-IN'))}</div>`:''}
+        ${!paid&&!past&&diff<=7?`<span class="lurge">Due in ${diff}d</span>`:''}
+        <div style="display:flex;gap:4px">
+          <button class="ibtn" onclick="editEv('${ev.id}')">✎</button>
+          <button class="ibtn d" onclick="delEv('${ev.id}')">✕</button>
+        </div>
+      </div>`;
+    el.appendChild(c);
+  });
+}
+
+function exportCSV(){
+  // Guard against CSV formula injection: cells starting with = + - @ or tab
+  const safe=v=>{
+    let s=String(v==null?'':v);
+    if(/^[=+\-@\t\r]/.test(s)) s="'"+s;
+    return '"'+s.replace(/"/g,'""')+'"';
+  };
+  const hd=['Title','Date','Time','Category','Location','Amount','Reminder','Repeat','Notes','Created'];
+  const rows=DB.rd().map(e=>[
+    safe(e.title),safe(e.date),safe(e.time),safe(e.cat),
+    safe(e.loc),safe(e.amt),safe(e.rem),safe(e.rep),
+    safe(e.notes),safe(e.ca)
+  ].join(','));
+  const a=Object.assign(document.createElement('a'),{
+    href:URL.createObjectURL(new Blob([[hd.join(','),...rows].join('\n')],{type:'text/csv'})),
+    download:`PlannerS_${today()}.csv`
+  });
+  a.click();
+}
+
+
+function toggleSubcat(){
+  const cat=val('ec');
+  ($('subcatGrp')||{style:{}}).style.display = (cat==='bill')?'flex':'none';
+}
+
+function openEv(cat){
+  setVal('eid', '');setTxt('mt', 'New Event');setTxt('mi', '✦');
+  setVal('et', '');setVal('ed', today());setVal('etm', '');
+  setVal('ec', cat||'event');
+  setVal('esc', 'subscription');
+  toggleSubcat();setVal('el', '');setVal('er', '0');
+  setVal('erp', 'none');setVal('ea', '');setVal('en', '');
+  sm('eModal');
+}
+function editEv(id){
+  const ev=DB.byId(id);if(!ev)return;
+  setVal('eid', ev.id);setTxt('mt', 'Edit Event');setTxt('mi', '✎');
+  setVal('et', ev.title||'');setVal('ed', ev.date||'');setVal('etm', ev.time||'');
+  setVal('ec', ev.cat||'event');
+  setVal('esc', ev.subcat||'subscription');
+  toggleSubcat();setVal('el', ev.loc||'');setVal('er', ev.rem||'0');
+  setVal('erp', ev.rep||'none');setVal('ea', ev.amt||'');setVal('en', ev.notes||'');
+  sm('eModal');
+}
+function saveEv(){
+  const rawTitle = strip(val('et'));
+  const date     = val('ed');
+  if(!rawTitle){ alert('Title required'); return; }
+  if(!date)    { alert('Date required');  return; }
+  if(!validDate(date)){ alert('Enter a real date, e.g. 2026-08-14'); return; }
+  const rawTime = val('etm').slice(0,5);
+  const ev={
+    title: strip(rawTitle, MAXLEN.title),
+    date,
+    time:  /^\d{2}:\d{2}$/.test(rawTime) ? rawTime : '',
+    cat:   oneOf(val('ec'), CATS, 'event'),
+    subcat:oneOf(val('esc'), SUBCATS, 'others'),
+    loc:   strip(val('el'), MAXLEN.loc),
+    rem:   String(Math.max(0, Math.min(365, parseInt(val('er'),10)||0))),
+    rep:   oneOf(val('erp'), REPS, 'none'),
+    amt:   String(safeNum(val('ea'))).slice(0,20),
+    notes: strip(val('en'), MAXLEN.notes)
+  };
+  const rawId = val('eid');
+  const id = rawId ? safeId(rawId) : null;
+  if(rawId && !id){ alert('That entry could not be identified. Nothing was saved.'); return; }
+  if(id){
+    if(!DB.byId(id)){ alert('That entry no longer exists - it was deleted. Nothing was saved.'); hm('eModal'); refreshAll(); return; }
+    DB.upd(id,ev);
+  } else {
+    DB.add(ev);
+  }
+  hm('eModal');refreshAll();
+}
+function delEv(id){
+  const ev=DB.byId(id); if(!ev) return;
+  const isRecurring = ev.rep && ev.rep!=='none' || ev.pid || ev.rc;
+  if(isRecurring){
+    const all=confirm('This is a recurring event.\n\nOK = delete ALL occurrences in the series\nCancel = delete only this one');
+    if(all){ DB.delSeries(ev); }
+    else { DB.del(id); }
+  } else {
+    if(!confirm('Delete this event?')) return;
+    DB.del(id);
+  }
+  refreshAll();
+}
+
+
+
+function requestNotifs(){
+  if(!('Notification' in window)){ showBanner('⚠️','Not supported','This device does not support notifications'); return; }
+  const btn=$('notifBtn');
+  if(Notification.permission==='granted'){
+    showBanner('🔔','Already on','Device notifications are enabled');
+    if(btn){btn.textContent='🔔 Notifications enabled';btn.classList.add('granted');}
+    return;
+  }
+  Notification.requestPermission().then(p=>{
+    if(p==='granted'){
+      showBanner('🔔','Notifications enabled','You will be reminded of due items');
+      if(btn){btn.textContent='🔔 Notifications enabled';btn.classList.add('granted');}
+      fireReminderNotifications();
+    } else {
+      showBanner('🔕','Not enabled','Turn on in iOS Settings if you change your mind');
+    }
+  });
+}
+function syncNotifBtn(){
+  const btn=document.getElementById('notifBtn'); if(!btn)return;
+  if(('Notification' in window)&&Notification.permission==='granted'){btn.textContent='🔔 Notifications enabled';btn.classList.add('granted');}
+}
+
+// ─── IN-APP TOP BANNER (native-style notification) ───
+function showBanner(icon,title,sub,onTap){
+  const wrap=$('nbanner'); if(!wrap)return;
+  wrap.innerHTML=''; wrap.classList.add('on');          // single box, never a stack
+  const b=document.createElement('div'); b.className='nban';
+  b.innerHTML='<div class="nban-ic">'+icon+'</div>'
+    +'<div class="nban-body"><div class="nban-ttl">'+esc(title)+'</div>'
+    +'<div class="nban-sub">'+esc(sub)+'</div></div>';
+  const acts=document.createElement('div'); acts.className='nban-acts';
+  const ok=document.createElement('button'); ok.className='nban-btn p'; ok.textContent='OK';
+  acts.appendChild(ok); b.appendChild(acts);
+  const dismiss=()=>{b.classList.add('out');setTimeout(()=>{wrap.innerHTML='';wrap.classList.remove('on');},340);};
+  ok.addEventListener('click',e=>{e.stopPropagation();dismiss();if(onTap)onTap();});
+  wrap.addEventListener('click',e=>{if(e.target===wrap)dismiss();});
+  wrap.appendChild(b);
+  setTimeout(dismiss,5500);
+}
+
+function showReminderBanners(){
+  const wrap=$('nbanner'); if(!wrap)return;
+  const now=new Date(); now.setHours(0,0,0,0);
+  const todayDue=DB.withRem().filter(ev=>{
+    const diff=Math.ceil((new Date(ev.date+'T12:00:00')-now)/864e5);
+    return diff>=0 && diff<=1;
+  });
+  if(!todayDue.length) return;
+
+  // ONE centred card listing everything due, instead of a stack of banners
+  wrap.innerHTML=''; wrap.classList.add('on');
+  const b=document.createElement('div'); b.className='nban';
+  const n=todayDue.length;
+  b.innerHTML='<div class="nban-ic">\uD83D\uDD14</div>'
+    +'<div class="nban-body"><div class="nban-ttl">'+n+(n===1?' reminder':' reminders')+'</div>'
+    +'<div class="nban-sub">Due today or tomorrow</div></div>';
+  const list=document.createElement('div'); list.className='nban-list';
+  todayDue.slice(0,8).forEach(ev=>{
+    const diff=Math.ceil((new Date(ev.date+'T12:00:00')-now)/864e5);
+    const it=document.createElement('div'); it.className='nban-item';
+    it.innerHTML='<span style="font-size:16px">'+ce(ev.cat)+'</span>'
+      +'<span class="nban-item-t">'+esc(ev.title)+'</span>'
+      +'<span class="nban-item-w">'+(diff===0?'TODAY':'TOMORROW')+'</span>';
+    list.appendChild(it);
+  });
+  b.appendChild(list);
+  const acts=document.createElement('div'); acts.className='nban-acts';
+  const later=document.createElement('button'); later.className='nban-btn'; later.textContent='Dismiss';
+  const view=document.createElement('button');  view.className='nban-btn p';  view.textContent='View all';
+  acts.appendChild(later); acts.appendChild(view); b.appendChild(acts);
+  const close=()=>{b.classList.add('out');setTimeout(()=>{wrap.innerHTML='';wrap.classList.remove('on');},340);};
+  later.addEventListener('click',close);
+  view.addEventListener('click',()=>{close();switchTab('Reminders');});
+  wrap.addEventListener('click',e=>{if(e.target===wrap)close();});
+  wrap.appendChild(b);
+}
+
+function checkReminders(){
+  const evs=DB.withRem();if(!evs.length)return;
+  const now=new Date();now.setHours(0,0,0,0);
+  const list=$('rList'); if(!list)return; list.innerHTML='';
+  evs.forEach(ev=>{const diff=Math.ceil((new Date(ev.date+'T12:00:00')-now)/864e5);const it=document.createElement('div');it.className='ri';it.innerHTML=`<span style="font-size:18px">${ce(ev.cat)}</span><span class="rit">${esc(ev.title)}</span><span class="rid">${diff===0?'Today!':diff===1?'Tomorrow':`in ${diff}d`}</span>`;list.appendChild(it);});
+  sm('rModal');
+}
+
+function switchTab(tab){
+  curTab=tab;
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  {const t=$('tab'+tab); if(t)t.classList.add('on');}
+  {const f=$('fltRow'); if(f)f.style.display=(tab==='Calendar'||tab==='Agenda')?'flex':'none';}
+  if(tab==='Agenda')renderAgenda();
+  else if(tab==='Tracker')renderTracker();
+  else if(tab==='Reminders'){renderReminders();syncNotifBtn();}
+  else if(tab==='Bills')renderBills();
+  else if(tab==='Calendar'){renderCal();renderDP(selDate);}
+}
+
+function refreshAll(){
+  updateMeta();renderTicker();renderCal();renderDP(selDate);
+  if(curTab==='Agenda')renderAgenda();
+  else if(curTab==='Tracker')renderTracker();
+  else if(curTab==='Reminders')renderReminders();
+  else if(curTab==='Bills')renderBills();
+}
+
+function seed(){}
+
+
+// ═══ NOTIFICATIONS ═══
+async function enableNotifications(){
+  if(!('Notification' in window)) return false;
+  if(Notification.permission==='granted') return true;
+  if(Notification.permission!=='denied'){
+    const p=await Notification.requestPermission();
+    return p==='granted';
+  }
+  return false;
+}
+function fireReminderNotifications(){
+  if(!('Notification' in window)||Notification.permission!=='granted') return;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const key=NS+'notified.'+ymdLocal(today);
+  if(Store.get(key)) return; // only once per day
+  const due=DB.withRem();
+  if(!due.length) return;
+  due.forEach(ev=>{
+    const diff=Math.ceil((new Date(ev.date+'T12:00:00')-today)/864e5);
+    const when=diff===0?'today':diff===1?'tomorrow':`in ${diff} days`;
+    try{
+      new Notification('Planner S — '+ev.title,{
+        body:`${ce(ev.cat)} ${ev.title} is due ${when}`,
+        icon:'icon.svg',
+        tag:'ps-'+ev.id
+      });
+    }catch(e){}
+  });
+  Store.set(key,'1');
+}
+
+
+
+// ─── THEMES ───
+const THEMES=[
+  {id:'ember',   name:'Ember',    sw:['#0e0a06','#f0703f','#e04d2a']},
+  {id:'orchid',  name:'Orchid',   sw:['#0d0816','#a855f7','#c084fc']},
+  {id:'midnight',name:'Midnight', sw:['#060b14','#38bdf8','#2b8fd4']},
+  {id:'forest',  name:'Forest',   sw:['#05100c','#34d399','#22a173']}
+];
+const THEME_KEY=NS+'theme.v1';
+const validTheme=t=>THEMES.some(x=>x.id===t)?t:'ember';
+function currentTheme(){ return validTheme(Store.get(THEME_KEY)||'ember'); }
+function applyTheme(id){
+  const t=validTheme(id);
+  if(t==='ember') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme',t);
+  Store.set(THEME_KEY,t);
+  renderThemeGrid();
+}
+function renderThemeGrid(){
+  const g=document.getElementById('thGrid'); if(!g) return;
+  const cur=currentTheme();
+  g.innerHTML='';
+  THEMES.forEach(t=>{
+    const b=document.createElement('button');
+    b.className='thopt'+(t.id===cur?' on':'');
+    b.innerHTML='<div class="thswatch"><i style="background:'+t.sw[0]+'"></i><i style="background:'+t.sw[1]+'"></i><i style="background:'+t.sw[2]+'"></i></div>'
+               +'<div class="thname">'+esc(t.name)+'</div><div class="thtick">\u25CF</div>';
+    b.addEventListener('click',()=>applyTheme(t.id));
+    g.appendChild(b);
+  });
+}
+function openThemes(){ renderThemeGrid(); sm('thModal'); }
+
+// ─── TAB MONTH FILTER ───
+let tabMonthY=null, tabMonthM=null; // null = show All
+function tabMonthLabel(){
+  if(tabMonthY===null) return 'All';
+  return `${MN[tabMonthM-1]} ${tabMonthY}`;
+}
+function updateMonthLabels(){
+  const lbl=tabMonthLabel();
+  ['mfRem','mfBill'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=lbl;});
+}
+function shiftTabMonth(dir){
+  if(tabMonthY===null){ // start from current month
+    const n=new Date(); tabMonthY=n.getFullYear(); tabMonthM=n.getMonth()+1;
+  }
+  tabMonthM+=dir;
+  if(tabMonthM<1){tabMonthM=12;tabMonthY--;}
+  else if(tabMonthM>12){tabMonthM=1;tabMonthY++;}
+  updateMonthLabels();
+  rerenderCurrentTab();
+}
+function resetTabMonth(){
+  tabMonthY=null; tabMonthM=null;
+  updateMonthLabels();
+  rerenderCurrentTab();
+}
+function matchTabMonth(dateStr){
+  if(tabMonthY===null) return true;
+  const p=`${tabMonthY}-${String(tabMonthM).padStart(2,'0')}`;
+  return dateStr && dateStr.startsWith(p);
+}
+function rerenderCurrentTab(){
+  if(curTab==='Reminders')renderReminders();
+  else if(curTab==='Bills')renderBills();
+  else if(curTab==='Tracker')renderTracker();
+}
+
+(function init(){
+  // Remove any leftover notes (Notes feature removed)
+  try{const _d=DB.rd();const _f=_d.filter(e=>e.cat!=='note');if(_f.length!==_d.length)DB.wrAll(_f);}catch(e){}
+  if(!Store.get(NS+'cleared.v1')){
+    Store.del(NS+'legacy');
+    
+    Store.set(NS+'cleared.v1','1');
+  }
+  const now=new Date();calY=now.getFullYear();calM=now.getMonth()+1;selDate=today();
+  seed();updateMeta();renderTicker();updateMonthLabels();
+  requestAnimationFrame(()=>{renderCal();renderDP(selDate);requestAnimationFrame(()=>renderCal());});
+  document.querySelectorAll('.nbtn').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+  bind('prev', 'click',()=>{calM--;if(calM<1){calM=12;calY--;}renderCal();});
+  bind('next', 'click',()=>{calM++;if(calM>12){calM=1;calY++;}renderCal();});
+  bind('todayBtn', 'click',()=>{const n=new Date();calY=n.getFullYear();calM=n.getMonth()+1;selDate=today();renderCal();renderDP(selDate);});
+  document.querySelectorAll('.chip').forEach(chip=>{chip.addEventListener('click',()=>{document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));chip.classList.add('on');curFlt=chip.dataset.f;renderCal();renderDP(selDate);if(curTab==='Agenda')renderAgenda();});});
+  let _rsT;
+  const _relayout=()=>{clearTimeout(_rsT);_rsT=setTimeout(()=>{renderCal();renderDP(selDate);},120);};
+  
+  // Tracker sub-category filter chips
+  document.querySelectorAll('.tchip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      document.querySelectorAll('.tchip').forEach(c=>c.classList.remove('on'));
+      chip.classList.add('on'); trkSubcat=chip.dataset.sc; renderTracker();
+    });
+  });
+
+  window.addEventListener('resize',_relayout);
+  window.addEventListener('orientationchange',_relayout);
+  // Safari fires this when the address bar shows/hides on scroll
+  if(window.visualViewport){window.visualViewport.addEventListener('resize',_relayout);}
+  setTimeout(showReminderBanners,900);
+  enableNotifications().then(ok=>{if(ok)fireReminderNotifications();});
+
+})();
+
+// ── Global error reporter ───────────────────────────────────────────
+// Surfaces the failure (with the build tag) rather than leaving a dead UI.
+(function(){
+  let shown=false;
+  window.addEventListener('error',function(ev){
+    if(shown) return; shown=true;
+    const v=(document.getElementById('verTag')&&document.getElementById('verTag').textContent)||'?';
+    try{ showBanner('\u26A0\uFE0F','Something went wrong','Build '+v+' \u00B7 '+(ev.message||'error')); }
+    catch(e){ /* banner unavailable — stay silent rather than cascade */ }
+  });
+})();
+</script>
+</body>
+</html>
